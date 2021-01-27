@@ -1,19 +1,31 @@
+![Bank CI](https://github.com/lucaslvs/bank/workflows/Bank%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/lucaslvs/bank/badge.svg?branch=main)](https://coveralls.io/github/lucaslvs/bank?branch=main)
+
 # Bank
 
-To start your Phoenix server:
+> Short blurb about what your product does.
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Start Phoenix endpoint with `mix phx.server`
+One to two paragraph statement about your product and what it does.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+## Getting Started
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+> TODO
 
-## Learn more
+### Requirements
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+> TODO
+
+### Setup
+
+> TODO
+
+## Development
+
+> TODO
+
+## Testing
+
+> TODO
+
+## Deployng
+
+> TODO

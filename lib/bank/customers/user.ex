@@ -7,6 +7,15 @@ defmodule Bank.Customers.User do
 
   alias Bank.Customers.Account
 
+  @type t :: %__MODULE__{
+    id: integer(),
+    account: Bank.Customers.Account.t() | %Ecto.Association.NotLoaded{},
+    email: String.t(),
+    password_hash: String.t(),
+    inserted_at: DateTime.t(),
+    updated_at: DateTime.t()
+  }
+
   schema "users" do
     field :email, :string, null: false
     field :name, :string, null: false

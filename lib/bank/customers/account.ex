@@ -8,7 +8,7 @@ defmodule Bank.Customers.Account do
   alias Bank.Customers.User
 
   schema "accounts" do
-    field :balance, :integer
+    field :balance, Money.Ecto.Amount.Type, default: Money.new(0)
     field :number, :string, null: false
 
     belongs_to :user, User

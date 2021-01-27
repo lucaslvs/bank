@@ -1,0 +1,19 @@
+{
+  "default_stop_words": [
+    "defmodule",
+    "defrecord",
+    "defimpl",
+    "def.+(.+\/\/.+).+do"
+  ],
+  "skip_files": [
+    "test",
+    "priv",
+    "lib/bank_web.ex",
+    "lib/bank_web/gettext.ex",
+    "lib/bank_web/views/error_helpers.ex"
+  ],
+  "coverage_options": {
+    "treat_no_relevant_lines_as_covered": true,
+    "output_dir": "cover/"
+  }
+}

@@ -34,8 +34,16 @@ defmodule Bank.Customers.Account do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_length(:number, is: 6)
+    |> validate_money(:balance)
     |> unique_constraint(:number)
     |> assoc_constraint(:user)
     |> foreign_key_constraint(:user_id)
+  end
+
+  defp validate_money(changeset, field) do
+    validate_change(changeset, field, fn
+      _, %Money{amount: amount} when amount >= 0 -> []
+      _, _ -> [amount: "must be greater than or equal to 0"]
+    end)
   end
 end

@@ -7,6 +7,9 @@ defmodule Bank.Customers.Account do
 
   alias Bank.Customers.User
 
+  @required_fields [:number, :user_id]
+  @optional_fields [:balance]
+
   @type t :: %__MODULE__{
     id: integer(),
     user: Bank.Customers.User.t() | %Ecto.Association.NotLoaded{},
@@ -28,8 +31,11 @@ defmodule Bank.Customers.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:number, :balance])
-    |> validate_required([:number, :balance])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_length(:number, is: 6)
     |> unique_constraint(:number)
+    |> assoc_constraint(:user)
+    |> foreign_key_constraint(:user_id)
   end
 end

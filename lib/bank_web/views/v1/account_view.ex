@@ -11,8 +11,6 @@ defmodule BankWeb.V1.AccountView do
   end
 
   def render("account.json", %{account: account}) do
-    %{id: account.id,
-      number: account.number,
-      balance: account.balance}
+    %{id: account.id, number: account.number, balance: account.balance}
   end
 end

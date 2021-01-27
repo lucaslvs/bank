@@ -11,13 +11,13 @@ defmodule Bank.Customers.User do
   @email_format ~r/\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
 
   @type t :: %__MODULE__{
-    id: integer(),
-    account: Bank.Customers.Account.t() | %Ecto.Association.NotLoaded{},
-    email: String.t(),
-    password_hash: String.t(),
-    inserted_at: DateTime.t(),
-    updated_at: DateTime.t()
-  }
+          id: integer(),
+          account: Account.t() | %Ecto.Association.NotLoaded{},
+          email: String.t(),
+          password_hash: String.t(),
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   schema "users" do
     field :email, :string, null: false

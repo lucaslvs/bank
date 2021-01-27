@@ -50,7 +50,8 @@ defmodule Bank.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:excoveralls, "~> 0.13.3", only: :test}
+      {:excoveralls, "~> 0.13.3", only: :test},
+      {:credo, "~> 1.5.1", only: [:dev, :test], runtime: false}
     ]
   end
 

@@ -39,7 +39,15 @@ defmodule Bank.Customers.User do
     |> validate_length(:name, min: 1)
     |> validate_length(:password, min: 6)
     |> unique_constraint(:email)
+  end
+
+  @doc false
+  def create_changeset(attrs) do
+    __MODULE__
+    |> struct()
+    |> changeset(attrs)
     |> put_password_hash()
+    |> cast_assoc(:account, with: &Account.changeset/2, required: true)
   end
 
   defp put_password_hash(changeset) do

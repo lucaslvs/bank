@@ -5,10 +5,14 @@ defmodule Bank.Customers.User do
 
   import Ecto.Changeset
 
+  alias Bank.Customers.Account
+
   schema "users" do
     field :email, :string, null: false
     field :name, :string, null: false
     field :password_hash, :string, null: false
+
+    has_one :account, Account
 
     timestamps()
   end

@@ -51,6 +51,7 @@ defmodule Bank.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:money, "~> 1.8"},
+      {:argon2_elixir, "~> 2.4"},
       {:excoveralls, "~> 0.13.3", only: :test},
       {:credo, "~> 1.5.1", only: [:dev, :test], runtime: false}
     ]

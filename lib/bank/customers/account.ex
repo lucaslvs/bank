@@ -29,7 +29,7 @@ defmodule Bank.Customers.Account do
   end
 
   @doc false
-  def changeset(account, attrs) do
+  def changeset(%__MODULE__{} = account, attrs) do
     account
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)

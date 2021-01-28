@@ -9,7 +9,7 @@ defmodule Bank.Customers.Account do
 
   @required_fields [:number]
   @optional_fields [:balance, :user_id]
-  @default_balance_value 1_000_00
+  @default_balance_value 100_000
 
   @type t :: %__MODULE__{
           id: integer(),

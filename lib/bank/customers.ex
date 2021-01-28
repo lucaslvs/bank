@@ -22,7 +22,8 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id) do
+  @spec get_user!(integer() | binary()) :: User.t() | %Ecto.NoResultsError{}
+  def get_user!(id) when is_integer(id) or is_binary(id) do
     User
     |> Repo.get!(id)
     |> Repo.preload(:account)
@@ -134,7 +135,8 @@ defmodule Bank.Customers do
       %Ecto.Changeset{data: %Account{}}
 
   """
-  def change_account(%Account{} = account, attrs \\ %{}) do
+  @spec change_account(Account.t(), map() | none()) :: Ecto.Changeset.t()
+  def change_account(%Account{} = account, attrs \\ %{}) when is_map(attrs) do
     Account.changeset(account, attrs)
   end
 end

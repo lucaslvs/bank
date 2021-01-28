@@ -50,6 +50,43 @@ defmodule Bank.Customers do
   end
 
   @doc """
+  Gets a single user by the given `attrs`.
+
+  Raises `Ecto.NoResultsError` if the User does not exist.
+
+  ## Examples
+
+      iex> get_user_by!(%{email: "valid@email.com"})
+      %User{}
+
+      iex> get_user_by!(%{email: "invalid@email.com"})
+      ** (Ecto.NoResultsError)
+  """
+  @spec get_user_by!(map()) :: User.t() | %Ecto.NoResultsError{}
+  def get_user_by!(attrs) when is_map(attrs) do
+    Repo.get_by!(User, attrs)
+  end
+
+  @doc """
+  Gets a single user by the given `attrs`.
+
+  ## Examples
+
+      iex> get_user_by(%{email: "valid@email.com"})
+      {:ok, %User{}}
+
+      iex> get_user_by(%{email: "invalid@email.com"})
+      {:error, :not_found}
+  """
+  @spec get_user(map()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user_by(attrs) when is_map(attrs) do
+    {:ok, get_user_by!(attrs)}
+  rescue
+    Ecto.NoResultsError ->
+      {:error, :not_found}
+  end
+
+  @doc """
   Creates a `Bank.Customers.User` and `Bank.Customers.Account` by the given `attrs`.
 
   ## Examples

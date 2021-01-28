@@ -1,15 +1,19 @@
 defmodule BankWeb.Router do
+  @moduledoc false
+
   use BankWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/api/v1", BankWeb.V1, as: :api_v1 do
+  scope "/api", BankWeb, as: :api do
     pipe_through :api
 
-    resources "/users", UserController, only: [:create, :show]
-    resources "/accounts", AccountController, only: [:create, :show]
+    scope "/v1", V1, as: :v1 do
+      resources "/users", UserController, only: [:create, :show]
+      resources "/accounts", AccountController, only: [:show]
+    end
   end
 
   # Enables LiveDashboard only for development

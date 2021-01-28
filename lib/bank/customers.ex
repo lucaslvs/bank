@@ -22,37 +22,68 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
-
-  @doc """
-  Creates a user.
-
-  ## Examples
-
-      iex> create_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> create_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+  def get_user!(id) do
+    User
+    |> Repo.get!(id)
+    |> Repo.preload(:account)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
+  Gets a single user.
 
   ## Examples
 
-      iex> change_user(user)
-      %Ecto.Changeset{data: %User{}}
+      iex> get_user(123)
+      {:ok, %User{}}
+
+      iex> get_user(456)
+      {:error, :not_found}
 
   """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
+  @spec get_user(integer() | binary()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user(id) when is_integer(id) or is_binary(id) do
+    {:ok, get_user!(id)}
+  rescue
+    Ecto.NoResultsError ->
+      {:error, :not_found}
+  end
+
+  @doc """
+  Creates a `Bank.Customers.User` and `Bank.Customers.Account` by the given `attrs`.
+
+  ## Examples
+
+      iex> attrs = %{
+      ...>  account: %{number: "123456", balance: Money.new(0)},
+      ...>  email: "user@email.com",
+      ...>  email_confirmation: "user@email.com",
+      ...>  name: "user",
+      ...>  password: "password",
+      ...>  password_confirmation: "password"
+      ...> }
+      %{
+        account: %{balance: %Money{amount: 0, currency: :BRL}, number: "123456"},
+        email: "user@email.com",
+        email_confirmation: "user@email.com",
+        name: "user",
+        password: "password",
+        password_confirmation: "password"
+      }
+
+      iex> open_account(attrs)
+      {:ok, %User{}}
+
+      iex> open_account(%{})
+      {:error, %Ecto.Changeset{}}
+
+      iex> open_account(%{field: "bad_value"})
+      {:error, %Ecto.Changeset{}}
+  """
+  @spec open_account(map() | none()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
+  def open_account(attrs \\ %{}) when is_map(attrs) do
+    attrs
+    |> User.create_changeset()
+    |> Repo.insert()
   end
 
   @doc """
@@ -69,24 +100,29 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  def get_account!(id), do: Repo.get!(Account, id)
+  @spec get_account!(integer() | binary()) :: Account.t() | %Ecto.NoResultsError{}
+  def get_account!(id) when is_integer(id) or is_binary(id) do
+    Repo.get!(Account, id)
+  end
 
   @doc """
-  Creates a account.
+  Gets a single account.
 
   ## Examples
 
-      iex> create_account(%{field: value})
+      iex> get_account(123)
       {:ok, %Account{}}
 
-      iex> create_account(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      iex> get_account(456)
+      {:error, :not_found}
 
   """
-  def create_account(attrs \\ %{}) do
-    %Account{}
-    |> Account.changeset(attrs)
-    |> Repo.insert()
+  @spec get_account(integer() | binary()) :: {:ok, Account.t()} | {:error, :not_found}
+  def get_account(id) when is_integer(id) or is_binary(id) do
+    {:ok, get_account!(id)}
+  rescue
+    Ecto.NoResultsError ->
+      {:error, :not_found}
   end
 
   @doc """

@@ -7,20 +7,21 @@ defmodule Bank.Customers.Account do
 
   alias Bank.Customers.User
 
-  @required_fields [:number, :user_id]
-  @optional_fields [:balance]
+  @required_fields [:number]
+  @optional_fields [:balance, :user_id]
+  @default_balance_value 1_000_00
 
   @type t :: %__MODULE__{
           id: integer(),
           user: User.t() | %Ecto.Association.NotLoaded{},
           balance: Money.Ecto.Amount.Type.type(),
           number: String.t(),
-          inserted_at: DateTime.t(),
-          updated_at: DateTime.t()
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
         }
 
   schema "accounts" do
-    field :balance, Money.Ecto.Amount.Type, default: Money.new(0)
+    field :balance, Money.Ecto.Amount.Type, default: Money.new(@default_balance_value)
     field :number, :string, null: false
 
     belongs_to :user, User
@@ -28,16 +29,17 @@ defmodule Bank.Customers.Account do
     timestamps()
   end
 
+  @spec changeset(Bank.Customers.Account.t(), map()) :: Ecto.Changeset.t()
   @doc false
   def changeset(%__MODULE__{} = account, attrs) do
     account
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> assoc_constraint(:user)
+    |> foreign_key_constraint(:user_id)
     |> validate_required(@required_fields)
     |> validate_length(:number, is: 6)
     |> validate_money(:balance)
     |> unique_constraint(:number)
-    |> assoc_constraint(:user)
-    |> foreign_key_constraint(:user_id)
   end
 
   defp validate_money(changeset, field) do

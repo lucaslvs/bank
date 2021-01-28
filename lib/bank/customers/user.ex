@@ -22,8 +22,11 @@ defmodule Bank.Customers.User do
   schema "users" do
     field :email, :string, null: false
     field :name, :string, null: false
-    field :password, :string, virtual: true
     field :password_hash, :string, null: false
+
+    field :email_confirmation, :string, virtual: true
+    field :password, :string, virtual: true
+    field :password_confirmation, :string, virtual: true
 
     has_one :account, Account
 
@@ -46,6 +49,8 @@ defmodule Bank.Customers.User do
     __MODULE__
     |> struct()
     |> changeset(attrs)
+    |> validate_confirmation(:email, required: true)
+    |> validate_confirmation(:password, required: true)
     |> put_password_hash()
     |> cast_assoc(:account, with: &Account.changeset/2, required: true)
   end

@@ -54,6 +54,7 @@ defmodule Bank.MixProject do
       {:argon2_elixir, "~> 2.4"},
       {:guardian, "~> 2.1.1"},
       {:casex, "~> 0.4.0"},
+      {:cors_plug, "~> 2.0"},
       {:excoveralls, "~> 0.13.3", only: :test},
       {:credo, "~> 1.5.1", only: [:dev, :test], runtime: false}
     ]

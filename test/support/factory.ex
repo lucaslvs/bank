@@ -27,9 +27,7 @@ defmodule Bank.Factory do
     user_id
   end
 
-  defp get_user_id(%{user: %User{id: user_id}}) do
-    user_id
-  end
+  defp get_user_id(%{user: %User{id: user_id}}), do: user_id
 
   defp get_user_id(_params), do: raise(":user or :user_id is required")
 end

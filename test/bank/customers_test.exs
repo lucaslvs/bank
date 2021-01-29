@@ -27,22 +27,6 @@ defmodule Bank.CustomersTest do
       user = user_fixture()
       assert Customers.get_user!(user.id) == user
     end
-
-    test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Customers.create_user(@valid_attrs)
-      assert user.email == "some email"
-      assert user.name == "some name"
-      assert user.password_hash == "some password_hash"
-    end
-
-    test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Customers.create_user(@invalid_attrs)
-    end
-
-    test "change_user/1 returns a user changeset" do
-      user = user_fixture()
-      assert %Ecto.Changeset{} = Customers.change_user(user)
-    end
   end
 
   describe "accounts" do
@@ -64,16 +48,6 @@ defmodule Bank.CustomersTest do
     test "get_account!/1 returns the account with given id" do
       account = account_fixture()
       assert Customers.get_account!(account.id) == account
-    end
-
-    test "create_account/1 with valid data creates a account" do
-      assert {:ok, %Account{} = account} = Customers.create_account(@valid_attrs)
-      assert account.balance == 42
-      assert account.number == "some number"
-    end
-
-    test "create_account/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Customers.create_account(@invalid_attrs)
     end
 
     test "change_account/1 returns a account changeset" do

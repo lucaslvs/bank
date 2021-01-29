@@ -4,6 +4,7 @@ defmodule BankWeb.Router do
   use BankWeb, :router
 
   pipeline :api do
+    plug CORSPlug, origin: "*"
     plug :accepts, ["json"]
     plug Casex.CamelCaseDecoderPlug
   end
@@ -16,7 +17,9 @@ defmodule BankWeb.Router do
     scope "/v1", V1, as: :v1 do
       pipe_through :api
 
+      options "/users", UserController, :options
       resources "/users", UserController, only: [:create], singleton: true do
+        options "/authenticate", UserController, :options
         post "/authenticate", UserController, :authenticate
       end
     end
@@ -24,7 +27,10 @@ defmodule BankWeb.Router do
     scope "/v1", V1, as: :v1 do
       pipe_through [:api, :auth]
 
+      options "/users/:id", UserController, :options
       resources "/users", UserController, only: [:show]
+
+      options "/accounts/:id", AccountController, :options
       resources "/accounts", AccountController, only: [:show]
     end
   end

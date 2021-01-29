@@ -1,4 +1,4 @@
-![Bank CI](https://github.com/lucaslvs/bank/workflows/Bank%20CI/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/lucaslvs/bank/badge.svg?branch=main)](https://coveralls.io/github/lucaslvs/bank?branch=main)
+![Bank CI](https://github.com/lucaslvs/bank/workflows/Bank%20CI/badge.svg)
 
 # Bank
 

@@ -5,6 +5,7 @@ defmodule BankWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug Casex.CamelCaseDecoderPlug
   end
 
   pipeline :auth do

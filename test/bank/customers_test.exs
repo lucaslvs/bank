@@ -9,7 +9,7 @@ defmodule Bank.CustomersTest do
   describe "get_user!/1" do
     setup :create_user
 
-    test "Returns the user with given id is valid", %{user: user_expected} do
+    test "Returns the user when given id is valid", %{user: user_expected} do
       user_received = Customers.get_user!(user_expected.id)
 
       assert user_expected.id == user_received.id
@@ -17,7 +17,7 @@ defmodule Bank.CustomersTest do
       assert user_expected.email == user_received.email
     end
 
-    test "Raise a error the user with given id is invalid", %{user: user} do
+    test "Raise a error when given id is invalid", %{user: user} do
       assert_raise Ecto.NoResultsError, fn ->
         Customers.get_user!(user.id + 1)
       end

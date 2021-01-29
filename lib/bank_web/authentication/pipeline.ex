@@ -1,8 +1,8 @@
-defmodule Bank.Authentication.Pipeline do
+defmodule BankWeb.Authentication.Pipeline do
   use Guardian.Plug.Pipeline,
     otp_app: :bank,
-    module: Bank.Authentication.Guardian,
-    error_handler: Bank.Authentication.ErrorHandler
+    module: BankWeb.Authentication.Guardian,
+    error_handler: BankWeb.Authentication.ErrorHandler
 
   plug Guardian.Plug.VerifySession, claims: %{"typ" => "access"}
   plug Guardian.Plug.VerifyHeader, claims: %{"type" => "access"}

@@ -18,7 +18,7 @@ config :bank, BankWeb.Endpoint,
   pubsub_server: Bank.PubSub,
   live_view: [signing_salt: "dJA7QNbH"]
 
-config :bank, Bank.Authentication.Guardian,
+config :bank, BankWeb.Authentication.Guardian,
   issuer: "bank",
   secret_key: "HhIdoq+T09DC0aXK1mWTgSDT6To/r7u8U74NraaI1egjxMUwM6HIXnen4odlAyI3"
 

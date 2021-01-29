@@ -1,4 +1,4 @@
-defmodule Bank.Authentication.Guardian do
+defmodule BankWeb.Authentication.Guardian do
   @moduledoc false
 
   use Guardian, otp_app: :bank

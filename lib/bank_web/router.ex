@@ -8,7 +8,7 @@ defmodule BankWeb.Router do
   end
 
   pipeline :authentication do
-    plug Bank.Authentication.Pipeline
+    plug BankWeb.Authentication.Pipeline
   end
 
   pipeline :ensure_authentication do

@@ -1,9 +1,9 @@
-defmodule Bank.Authentication do
+defmodule BankWeb.Authentication do
   @moduledoc false
 
-  alias Bank.Authentication.Guardian
   alias Bank.Customers
   alias Bank.Customers.User
+  alias BankWeb.Authentication.Guardian
 
   @doc """
   Authenticate user by the given `email` and `password`.

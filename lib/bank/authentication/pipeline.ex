@@ -1,6 +1,6 @@
 defmodule Bank.Authentication.Pipeline do
   use Guardian.Plug.Pipeline,
-    opt_app: :bank,
+    otp_app: :bank,
     module: Bank.Authentication.Guardian,
     error_handler: Bank.Authentication.ErrorHandler
 

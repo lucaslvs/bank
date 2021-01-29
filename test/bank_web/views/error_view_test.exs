@@ -8,6 +8,10 @@ defmodule BankWeb.ErrorViewTest do
     assert render(BankWeb.ErrorView, "404.json", []) == %{errors: %{detail: "Not Found"}}
   end
 
+  test "renders 401.json" do
+    assert render(BankWeb.ErrorView, "401.json", []) == %{errors: %{detail: "Unauthorized"}}
+  end
+
   test "renders 500.json" do
     assert render(BankWeb.ErrorView, "500.json", []) ==
              %{errors: %{detail: "Internal Server Error"}}

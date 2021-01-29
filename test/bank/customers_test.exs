@@ -17,9 +17,9 @@ defmodule Bank.CustomersTest do
       assert user_expected.email == user_received.email
     end
 
-    test "Raise a error when given id is invalid", %{user: user} do
+    test "Raise a error when given id is invalid", %{user: %User{id: id}} do
       assert_raise Ecto.NoResultsError, fn ->
-        Customers.get_user!(user.id + 1)
+        Customers.get_user!(id + 1)
       end
     end
   end
@@ -34,8 +34,8 @@ defmodule Bank.CustomersTest do
       assert user_expected.email == user.email
     end
 
-    test "Returns a not found error when the given id is invalid", %{user: user} do
-      assert {:error, :not_found} = Customers.get_user(user.id + 1)
+    test "Returns a not found error when the given id is invalid", %{user: %User{id: id}} do
+      assert {:error, :not_found} = Customers.get_user(id + 1)
     end
   end
 

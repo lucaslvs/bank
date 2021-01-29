@@ -7,11 +7,25 @@ defmodule BankWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authentication do
+    plug Bank.Authentication.Pipeline
+  end
+
+  pipeline :ensure_authentication do
+    plug Guardian.Plug.EnsureAuthenticated
+  end
+
   scope "/api", BankWeb, as: :api do
-    pipe_through :api
+    scope "/v1", V1, as: :v1 do
+      pipe_through [:api, :authentication]
+
+      resources "/users", UserController, only: [:create]
+    end
 
     scope "/v1", V1, as: :v1 do
-      resources "/users", UserController, only: [:create, :show]
+      pipe_through [:api, :authentication, :ensure_authentication]
+
+      resources "/users", UserController, only: [:show]
       resources "/accounts", AccountController, only: [:show]
     end
   end

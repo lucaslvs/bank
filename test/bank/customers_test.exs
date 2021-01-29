@@ -42,7 +42,7 @@ defmodule Bank.CustomersTest do
   describe "get_user_by!/1" do
     setup :create_user
 
-    test "Returns the user when given id is valid", %{user: user_expected} do
+    test "Returns the user when given parameters is valid", %{user: user_expected} do
       params = Map.take(user_expected, [:id, :name, :email])
       user_received = Customers.get_user_by!(params)
 
@@ -51,7 +51,7 @@ defmodule Bank.CustomersTest do
       assert user_expected.email == user_received.email
     end
 
-    test "Raise a error when given id is invalid", %{user: %User{id: id}} do
+    test "Raise a error when given parameters is invalid", %{user: %User{id: id}} do
       assert_raise Ecto.NoResultsError, fn ->
         params = Map.new(id: id + 1, name: "not exist", email: "not exist")
         Customers.get_user_by!(params)

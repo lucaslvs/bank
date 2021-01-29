@@ -1,5 +1,5 @@
 defmodule Bank.CustomersTest do
-  use Bank.DataCase
+  use Bank.DataCase, async: true
 
   import Bank.Factory
 
@@ -28,10 +28,10 @@ defmodule Bank.CustomersTest do
     setup :create_user
 
     test "Returns the user when the given id is valid", %{user: user_expected} do
-      assert {:ok, %User{} = user} = Customers.get_user(user_expected.id)
-      assert user_expected.id == user.id
-      assert user_expected.name == user.name
-      assert user_expected.email == user.email
+      assert {:ok, %User{} = user_received} = Customers.get_user(user_expected.id)
+      assert user_expected.id == user_received.id
+      assert user_expected.name == user_received.name
+      assert user_expected.email == user_received.email
     end
 
     test "Returns a not found error when the given id is invalid", %{user: %User{id: id}} do

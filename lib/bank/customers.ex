@@ -162,18 +162,4 @@ defmodule Bank.Customers do
     Ecto.NoResultsError ->
       {:error, :not_found}
   end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking account changes.
-
-  ## Examples
-
-      iex> change_account(account)
-      %Ecto.Changeset{data: %Account{}}
-
-  """
-  @spec change_account(Account.t(), map() | none()) :: Ecto.Changeset.t()
-  def change_account(%Account{} = account, attrs \\ %{}) when is_map(attrs) do
-    Account.changeset(account, attrs)
-  end
 end

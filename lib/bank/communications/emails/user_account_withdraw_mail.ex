@@ -1,4 +1,6 @@
 defmodule Bank.Communications.UserAccountWithdrawMail do
+  @moduledoc false
+
   use Bank.Communications.Mail, :sendgrid
 
   alias Bank.Customers.User

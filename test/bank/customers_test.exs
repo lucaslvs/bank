@@ -1,37 +1,32 @@
 defmodule Bank.CustomersTest do
   use Bank.DataCase
 
+  import Bank.Factory
+
   alias Bank.Customers
+  alias Bank.Customers.{Account, User}
 
-  describe "users" do
-    alias Bank.Customers.User
+  describe "get_user!/1" do
+    setup :create_user
 
-    @valid_attrs %{email: "some email", name: "some name", password_hash: "some password_hash"}
-    @update_attrs %{
-      email: "some updated email",
-      name: "some updated name",
-      password_hash: "some updated password_hash"
-    }
-    @invalid_attrs %{email: nil, name: nil, password_hash: nil}
+    test "Returns the user with given id is valid", %{user: user_expected} do
+      user_received = Customers.get_user!(user_expected.id)
 
-    def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Customers.create_user()
-
-      user
+      assert user_expected.id == user_received.id
+      assert user_expected.name == user_received.name
+      assert user_expected.email == user_received.email
     end
 
-    test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Customers.get_user!(user.id) == user
+    test "Raise a error the user with given id is invalid", %{user: user} do
+      assert_raise Ecto.NoResultsError, fn ->
+        Customers.get_user!(user.id + 1)
+      end
     end
   end
 
-  describe "accounts" do
-    alias Bank.Customers.Account
+  defp create_user(_context), do: {:ok, user: insert(:user)}
 
+  describe "accounts" do
     @valid_attrs %{balance: 42, number: "some number"}
     @update_attrs %{balance: 43, number: "some updated number"}
     @invalid_attrs %{balance: nil, number: nil}

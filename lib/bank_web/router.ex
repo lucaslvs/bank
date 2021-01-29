@@ -4,7 +4,7 @@ defmodule BankWeb.Router do
   use BankWeb, :router
 
   pipeline :api do
-    plug CORSPlug, origin: "*"
+    plug CORSPlug, origin: ["*"]
     plug :accepts, ["json"]
     plug Casex.CamelCaseDecoderPlug
   end

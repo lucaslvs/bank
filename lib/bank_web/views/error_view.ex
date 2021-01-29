@@ -1,5 +1,7 @@
 defmodule BankWeb.ErrorView do
+  # coveralls-ignore-start
   use BankWeb, :view
+  # coveralls-ignore-stop
 
   # If you want to customize a particular status code
   # for a certain format, you may uncomment below.

@@ -1,7 +1,7 @@
 defmodule BankWeb.V1.UserView do
-  @moduledoc false
-
+  # coveralls-ignore-start
   use BankWeb, :view
+  # coveralls-ignore-stop
 
   alias BankWeb.V1.{AccountView, UserView}
 

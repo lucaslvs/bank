@@ -49,9 +49,11 @@ defmodule BankWeb.Router do
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router
 
+    # coveralls-ignore-start
     scope "/" do
       pipe_through [:fetch_session, :protect_from_forgery]
       live_dashboard "/dashboard", metrics: BankWeb.Telemetry
     end
+    # coveralls-ignore-stop
   end
 end

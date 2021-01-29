@@ -9,6 +9,7 @@
     "test",
     "priv",
     "lib/bank_web.ex",
+    "lib/bank/application.ex",
     "lib/bank_web/gettext.ex",
     "lib/bank_web/views/error_helpers.ex"
   ],

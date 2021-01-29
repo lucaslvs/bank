@@ -1,5 +1,7 @@
 defmodule BankWeb.ChangesetView do
+  # coveralls-ignore-start
   use BankWeb, :view
+  # coveralls-ignore-stop
 
   @doc """
   Traverses and translates changeset errors.

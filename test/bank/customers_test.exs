@@ -59,6 +59,25 @@ defmodule Bank.CustomersTest do
     end
   end
 
+  describe "get_user_by/1" do
+    setup :create_user
+
+    test "Returns the user when given parameters is valid", %{user: user_expected} do
+      params = Map.take(user_expected, [:id, :name, :email])
+
+      assert {:ok, %User{} = user_received} = Customers.get_user_by(params)
+      assert user_expected.id == user_received.id
+      assert user_expected.name == user_received.name
+      assert user_expected.email == user_received.email
+    end
+
+    test "Returns a not found error when given parameters is invalid", %{user: %User{id: id}} do
+      params = Map.new(id: id + 1, name: "not exist", email: "not exist")
+
+      assert {:error, :not_found} = Customers.get_user_by(params)
+    end
+  end
+
   defp create_user(_context), do: {:ok, user: insert(:user)}
 
   # describe "accounts" do

@@ -18,6 +18,7 @@ defmodule BankWeb.Router do
       pipe_through :api
 
       options "/users", UserController, :options
+
       resources "/users", UserController, only: [:create], singleton: true do
         options "/authenticate", UserController, :options
         post "/authenticate", UserController, :authenticate
@@ -54,6 +55,7 @@ defmodule BankWeb.Router do
       pipe_through [:fetch_session, :protect_from_forgery]
       live_dashboard "/dashboard", metrics: BankWeb.Telemetry
     end
+
     # coveralls-ignore-stop
   end
 end

@@ -46,6 +46,10 @@ config :bank, BankWeb.Endpoint,
 # configured to run both http and https servers on
 # different ports.
 
+config :bank, Bank.Communications.Mailer,
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:4000/sent_emails"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

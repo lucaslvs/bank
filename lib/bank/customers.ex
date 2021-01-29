@@ -78,7 +78,7 @@ defmodule Bank.Customers do
       iex> get_user_by(%{email: "invalid@email.com"})
       {:error, :not_found}
   """
-  @spec get_user(map()) :: {:ok, User.t()} | {:error, :not_found}
+  @spec get_user_by(map()) :: {:ok, User.t()} | {:error, :not_found}
   def get_user_by(attrs) when is_map(attrs) do
     {:ok, get_user_by!(attrs)}
   rescue

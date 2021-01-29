@@ -6,7 +6,6 @@ defmodule BankWeb.Authentication.Pipeline do
     module: BankWeb.Authentication.Guardian,
     error_handler: BankWeb.Authentication.ErrorHandler
 
-  plug Guardian.Plug.VerifySession, claims: %{"typ" => "access"}
-  plug Guardian.Plug.VerifyHeader, claims: %{"type" => "access"}
-  plug Guardian.Plug.LoadResource, allow_blank: true
+  plug Guardian.Plug.VerifyHeader
+  plug Guardian.Plug.EnsureAuthenticated
 end

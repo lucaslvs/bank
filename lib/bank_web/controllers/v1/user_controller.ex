@@ -20,4 +20,10 @@ defmodule BankWeb.V1.UserController do
       render(conn, "show.json", user: user)
     end
   end
+
+  def authenticate(conn, %{"email" => email, "password" => password}) do
+    with {:ok, token, _claims} <- authenticate_user(email, password) do
+      render(conn, "user_token.json", token: token)
+    end
+  end
 end

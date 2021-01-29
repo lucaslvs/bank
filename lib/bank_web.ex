@@ -22,7 +22,7 @@ defmodule BankWeb do
       use Phoenix.Controller, namespace: BankWeb
 
       import Plug.Conn
-      import BankWeb.Gettext
+      import BankWeb.{Authentication, Gettext}
       alias BankWeb.Router.Helpers, as: Routes
     end
   end

@@ -7,23 +7,21 @@ defmodule BankWeb.Router do
     plug :accepts, ["json"]
   end
 
-  pipeline :authentication do
+  pipeline :auth do
     plug BankWeb.Authentication.Pipeline
-  end
-
-  pipeline :ensure_authentication do
-    plug Guardian.Plug.EnsureAuthenticated
   end
 
   scope "/api", BankWeb, as: :api do
     scope "/v1", V1, as: :v1 do
-      pipe_through [:api, :authentication]
+      pipe_through :api
 
-      resources "/users", UserController, only: [:create]
+      resources "/users", UserController, only: [:create], singleton: true do
+        post "/authenticate", UserController, :authenticate
+      end
     end
 
     scope "/v1", V1, as: :v1 do
-      pipe_through [:api, :authentication, :ensure_authentication]
+      pipe_through [:api, :auth]
 
       resources "/users", UserController, only: [:show]
       resources "/accounts", AccountController, only: [:show]
@@ -33,9 +31,9 @@ defmodule BankWeb.Router do
   # Enables LiveDashboard only for development
   #
   # If you want to use the LiveDashboard in production, you should put
-  # it behind authentication and allow only admins to access it.
+  # it behind auth and allow only admins to access it.
   # If your application does not have an admins-only section yet,
-  # you can use Plug.BasicAuth to set up some basic authentication
+  # you can use Plug.BasicAuth to set up some basic auth
   # as long as you are also using SSL (which you should anyway).
   if Mix.env() in [:dev, :test] do
     import Phoenix.LiveDashboard.Router

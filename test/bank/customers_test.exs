@@ -24,30 +24,45 @@ defmodule Bank.CustomersTest do
     end
   end
 
-  defp create_user(_context), do: {:ok, user: insert(:user)}
+  describe "get_user/1" do
+    setup :create_user
 
-  describe "accounts" do
-    @valid_attrs %{balance: 42, number: "some number"}
-    @update_attrs %{balance: 43, number: "some updated number"}
-    @invalid_attrs %{balance: nil, number: nil}
-
-    def account_fixture(attrs \\ %{}) do
-      {:ok, account} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Customers.create_account()
-
-      account
+    test "Returns the user when the given id is valid", %{user: user_expected} do
+      assert {:ok, %User{} = user} = Customers.get_user(user_expected.id)
+      assert user_expected.id == user.id
+      assert user_expected.name == user.name
+      assert user_expected.email == user.email
     end
 
-    test "get_account!/1 returns the account with given id" do
-      account = account_fixture()
-      assert Customers.get_account!(account.id) == account
-    end
-
-    test "change_account/1 returns a account changeset" do
-      account = account_fixture()
-      assert %Ecto.Changeset{} = Customers.change_account(account)
+    test "Returns a not found error when the given id is invalid", %{user: user} do
+      assert {:error, :not_found} = Customers.get_user(user.id + 1)
     end
   end
+
+  defp create_user(_context), do: {:ok, user: insert(:user)}
+
+  # describe "accounts" do
+  #   @valid_attrs %{balance: 42, number: "some number"}
+  #   @update_attrs %{balance: 43, number: "some updated number"}
+  #   @invalid_attrs %{balance: nil, number: nil}
+
+  #   def account_fixture(attrs \\ %{}) do
+  #     {:ok, account} =
+  #       attrs
+  #       |> Enum.into(@valid_attrs)
+  #       |> Customers.create_account()
+
+  #     account
+  #   end
+
+  #   test "get_account!/1 returns the account with given id" do
+  #     account = account_fixture()
+  #     assert Customers.get_account!(account.id) == account
+  #   end
+
+  #   test "change_account/1 returns a account changeset" do
+  #     account = account_fixture()
+  #     assert %Ecto.Changeset{} = Customers.change_account(account)
+  #   end
+  # end
 end

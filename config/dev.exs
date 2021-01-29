@@ -46,7 +46,7 @@ config :bank, BankWeb.Endpoint,
 # configured to run both http and https servers on
 # different ports.
 
-config :bank, Bank.Communications.Mailer,
+config :bank, Bank.Notifications.Mailer,
   adapter: Bamboo.LocalAdapter,
   open_email_in_browser_url: "http://localhost:4000/sent_emails"
 

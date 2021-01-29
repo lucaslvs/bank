@@ -18,7 +18,7 @@ config :bank, BankWeb.Endpoint,
   http: [port: 4002],
   server: false
 
-config :bank, Bank.Communications.Mailer, adapter: Bamboo.TestAdapter
+config :bank, Bank.Notifications.Mailer, adapter: Bamboo.TestAdapter
 
 config :argon2_elixir, :log_rounds, 4
 

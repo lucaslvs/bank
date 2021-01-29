@@ -1,18 +1,18 @@
-defmodule Bank.Communications.Mail do
+defmodule Bank.Notifications.Mail do
   @moduledoc """
   A module that map definitions used by each email adapter.
 
   This can be used in your application as:
 
-      use Bank.Communications.Mail, :sendgrid
-      use Bank.Communications.Mail, :another_email_adapter
+      use Bank.Notifications.Mail, :sendgrid
+      use Bank.Notifications.Mail, :another_email_adapter
   """
 
   @callback build(Bank.Customers.User.t(), any()) :: Bamboo.Email.t()
 
   def sendgrid do
     quote do
-      @behaviour Bank.Communications.Mail
+      @behaviour Bank.Notifications.Mail
 
       import Bamboo.Email
       import Bamboo.SendGridAdapter

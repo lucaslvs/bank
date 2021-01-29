@@ -46,6 +46,6 @@ api_key =
     environment variable SENDGRID_API_KEY is missing.
     """
 
-config :bank, Bank.Communications.Mailer,
+config :bank, Bank.Notifications.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: api_key

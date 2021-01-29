@@ -1,11 +1,11 @@
-defmodule Bank.Communications.UserAccountWithdrawMail do
+defmodule Bank.Notifications.UserAccountWithdrawMail do
   @moduledoc false
 
-  use Bank.Communications.Mail, :sendgrid
+  use Bank.Notifications.Mail, :sendgrid
 
   alias Bank.Customers.User
 
-  @impl Bank.Communications.Mail
+  @impl Bank.Notifications.Mail
   @spec build(User.t(), Money.t()) :: Bamboo.Email.t()
   def build(%User{name: name, email: email}, %Money{} = money) do
     text_body = message(name, money)

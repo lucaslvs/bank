@@ -39,3 +39,13 @@ config :bank, BankWeb.Endpoint,
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.
+
+api_key =
+  System.get_env("SENDGRID_API_KEY") ||
+    raise """
+    environment variable SENDGRID_API_KEY is missing.
+    """
+
+config :bank, Bank.Communications.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  api_key: api_key

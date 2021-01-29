@@ -1,4 +1,6 @@
 defmodule BankWeb.Authentication.ErrorHandler do
+  @moduledoc false
+
   import Plug.Conn
 
   @behaviour Guardian.Plug.ErrorHandler

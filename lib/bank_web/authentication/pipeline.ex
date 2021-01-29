@@ -1,4 +1,6 @@
 defmodule BankWeb.Authentication.Pipeline do
+  @moduledoc false
+
   use Guardian.Plug.Pipeline,
     otp_app: :bank,
     module: BankWeb.Authentication.Guardian,

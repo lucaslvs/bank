@@ -78,7 +78,27 @@ defmodule Bank.CustomersTest do
     end
   end
 
+  describe "get_account!/1" do
+    setup [:create_user, :create_account]
+
+    test "Returns the account when given id is valid", %{account: account_expected} do
+      account_received = Customers.get_account!(account_expected.id)
+
+      assert account_expected.id == account_received.id
+      assert account_expected.number == account_received.number
+      assert account_expected.balance == account_received.balance
+    end
+
+    test "Raise a error when given id is invalid", %{account: %Account{id: id}} do
+      assert_raise Ecto.NoResultsError, fn ->
+        Customers.get_account!(id + 1)
+      end
+    end
+  end
+
   defp create_user(_context), do: {:ok, user: insert(:user)}
+
+  defp create_account(%{user: user}), do: {:ok, account: insert(:account, user: user)}
 
   # describe "accounts" do
   #   @valid_attrs %{balance: 42, number: "some number"}

@@ -17,10 +17,13 @@ defmodule BankWeb.Router do
     scope "/v1", V1, as: :v1 do
       pipe_through :api
 
+      # coveralls-ignore-start
       options "/users", UserController, :options
+      options "/users/authenticate", UserController, :options
+
+      # coveralls-ignore-stop
 
       resources "/users", UserController, only: [:create], singleton: true do
-        options "/authenticate", UserController, :options
         post "/authenticate", UserController, :authenticate
       end
     end
@@ -28,10 +31,13 @@ defmodule BankWeb.Router do
     scope "/v1", V1, as: :v1 do
       pipe_through [:api, :auth]
 
+      # coveralls-ignore-start
       options "/users/:id", UserController, :options
-      resources "/users", UserController, only: [:show]
-
       options "/accounts/:id", AccountController, :options
+
+      # coveralls-ignore-stop
+
+      resources "/users", UserController, only: [:show]
       resources "/accounts", AccountController, only: [:show]
     end
   end

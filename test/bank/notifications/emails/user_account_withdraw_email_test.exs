@@ -1,5 +1,5 @@
 
-defmodule Bank.NotificationsTest do
+defmodule Bank.Notifications.UserAccountWithdrawEmailTest do
   use Bank.DataCase, async: true
   use Bamboo.Test
 

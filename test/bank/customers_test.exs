@@ -26,7 +26,9 @@ defmodule Bank.CustomersTest do
     }
 
     test "Returns a user and account when the given parameters is valid" do
-      assert {:ok, %User{account: %Account{} = account} = user} = Customers.open_account(@valid_params)
+      assert {:ok, %User{account: %Account{} = account} = user} =
+               Customers.open_account(@valid_params)
+
       assert account.number == "654321"
       assert account.balance == %Money{amount: 100_000, currency: :BRL}
       assert user.name == "User"

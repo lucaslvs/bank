@@ -60,8 +60,8 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_account!(integer() | binary()) :: Account.t() | %Ecto.NoResultsError{}
-  def get_account!(id) when is_integer(id) or is_binary(id) do
+  @spec get_account!(integer()) :: Account.t() | %Ecto.NoResultsError{}
+  def get_account!(id) when is_integer(id) do
     Repo.get!(Account, id)
   end
 
@@ -77,8 +77,8 @@ defmodule Bank.Customers do
       {:error, :not_found}
 
   """
-  @spec get_account(integer() | binary()) :: {:ok, Account.t()} | {:error, :not_found}
-  def get_account(id) when is_integer(id) or is_binary(id) do
+  @spec get_account(integer()) :: {:ok, Account.t()} | {:error, :not_found}
+  def get_account(id) when is_integer(id) do
     {:ok, get_account!(id)}
   rescue
     Ecto.NoResultsError ->
@@ -99,8 +99,8 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_user!(integer() | binary()) :: User.t() | %Ecto.NoResultsError{}
-  def get_user!(id) when is_integer(id) or is_binary(id) do
+  @spec get_user!(integer()) :: User.t() | %Ecto.NoResultsError{}
+  def get_user!(id) when is_integer(id) do
     User
     |> Repo.get!(id)
     |> Repo.preload(:account)
@@ -118,8 +118,8 @@ defmodule Bank.Customers do
       {:error, :not_found}
 
   """
-  @spec get_user(integer() | binary()) :: {:ok, User.t()} | {:error, :not_found}
-  def get_user(id) when is_integer(id) or is_binary(id) do
+  @spec get_user(integer()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user(id) when is_integer(id) do
     {:ok, get_user!(id)}
   rescue
     Ecto.NoResultsError ->
@@ -141,7 +141,9 @@ defmodule Bank.Customers do
   """
   @spec get_user_by!(map()) :: User.t() | %Ecto.NoResultsError{}
   def get_user_by!(attrs) when is_map(attrs) do
-    Repo.get_by!(User, attrs)
+    User
+    |> Repo.get_by!(attrs)
+    |> Repo.preload(:account)
   end
 
   @doc """

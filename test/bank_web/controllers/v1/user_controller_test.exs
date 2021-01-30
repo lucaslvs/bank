@@ -3,6 +3,7 @@ defmodule BankWeb.V1.UserControllerTest do
 
   import Bank.Factory
 
+  alias Bank.Customers.User
   alias BankWeb.Authentication.Guardian
 
   setup %{conn: conn} do
@@ -74,6 +75,35 @@ defmodule BankWeb.V1.UserControllerTest do
         |> get(Routes.api_v1_user_path(conn, :show, user.id))
 
       assert json_response(conn, 401) == %{"errors" => %{"detail" => "Unauthenticated"}}
+    end
+  end
+
+  describe "authenticate user" do
+    test "Renders token when the given email and password is valid", %{
+      conn: conn,
+      user: %User{id: id, name: name, email: email}
+    } do
+      conn =
+        conn
+        |> delete_req_header("authorization")
+        |> post("/api/v1/users/authenticate", email: email, password: "123456")
+
+      assert %{"token" => token} = json_response(conn, 201)
+      assert {:ok, %User{} = user, _claims} = Guardian.resource_from_token(token)
+      assert id == user.id
+      assert name == user.name
+      assert email == user.email
+    end
+
+    test "Renders :unauthorized status when the given email and password is valid", %{
+      conn: conn
+    } do
+      conn =
+        conn
+        |> delete_req_header("authorization")
+        |> post("/api/v1/users/authenticate", email: "wrong", password: "wrong")
+
+        assert json_response(conn, 401) == %{"errors" => %{"detail" => "Unauthorized"}}
     end
   end
 end

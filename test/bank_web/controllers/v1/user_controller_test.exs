@@ -1,52 +1,49 @@
 defmodule BankWeb.V1.UserControllerTest do
   use BankWeb.ConnCase
 
-  alias Bank.Customers
-  alias Bank.Customers.User
+  import Bank.Factory
 
-  @create_attrs %{
-    email: "some email",
-    name: "some name",
-    password_hash: "some password_hash"
-  }
-  @update_attrs %{
-    email: "some updated email",
-    name: "some updated name",
-    password_hash: "some updated password_hash"
-  }
-  @invalid_attrs %{email: nil, name: nil, password_hash: nil}
-
-  def fixture(:user) do
-    {:ok, user} = Customers.create_user(@create_attrs)
-    user
-  end
+  alias BankWeb.Authentication.Guardian
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = insert(:user)
+    account = insert(:account, user: user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+    {:ok, account: account, conn: conn}
   end
 
   describe "create user" do
-    test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+    @valid_email "user@email.com"
+    @valid_password "123456"
 
-      conn = get(conn, Routes.api_v1_user_path(conn, :show, id))
+    @valid_params %{
+      name: "User",
+      email: @valid_email,
+      email_confirmation: @valid_email,
+      password: @valid_password,
+      password_confirmation: @valid_password,
+      account: %{number: "654321", balance: 100_000}
+    }
+
+    test "renders user when data is valid", %{conn: conn} do
+      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @valid_params)
 
       assert %{
-               "id" => id,
-               "email" => "some email",
-               "name" => "some name"
-             } = json_response(conn, 200)["data"]
+               "name" => "User",
+               "email" => @valid_email,
+               "account" => %{"number" => "654321", "balance" => "R$ 1,000.00"}
+             } = json_response(conn, 201)["user"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: @invalid_attrs)
+      conn = post(conn, Routes.api_v1_user_path(conn, :create), user: Map.new())
       assert json_response(conn, 422)["errors"] != %{}
     end
-  end
-
-  defp create_user(_) do
-    user = fixture(:user)
-    %{user: user}
   end
 end

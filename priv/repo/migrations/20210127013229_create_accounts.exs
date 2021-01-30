@@ -10,7 +10,7 @@ defmodule Bank.Repo.Migrations.CreateAccounts do
       timestamps()
     end
 
+    create unique_index(:accounts, [:user_id])
     create unique_index(:accounts, [:number])
-    create index(:accounts, [:user_id])
   end
 end

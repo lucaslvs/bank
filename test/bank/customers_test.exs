@@ -6,17 +6,32 @@ defmodule Bank.CustomersTest do
   alias Bank.Customers
   alias Bank.Customers.{Account, User}
 
-  # describe "open_account/1" do
-  #   setup [:create_user, :create_account]
+  describe "open_account/1" do
+    @valid_email "user@email.com"
+    @valid_password "123456"
 
-  #   test "" do
+    @valid_params %{
+      name: "User",
+      email: @valid_email,
+      email_confirmation: @valid_email,
+      password: @valid_password,
+      password_confirmation: @valid_password,
+      account: %{number: "654321", balance: 100_000}
+    }
 
-  #   end
+    test "Returns a user and account when the given parameters is valid" do
+      assert {:ok, %User{account: %Account{} = account} = user} = Customers.open_account(@valid_params)
+      assert account.number == "654321"
+      assert account.balance == %Money{amount: 100_000, currency: :BRL}
+      assert user.name == "User"
+      assert user.email == @valid_email
+      assert Argon2.check_pass(user, @valid_password)
+    end
 
-  #   test "" do
-
-  #   end
-  # end
+    test "Returns a Changeset invalid when the given parameters is empty" do
+      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account(Map.new())
+    end
+  end
 
   describe "get_account!/1" do
     setup [:create_user, :create_account]

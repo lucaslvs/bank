@@ -28,13 +28,13 @@ defmodule Bank.NotificationsTest do
 
         Notifications.send_user_account_withdraw_email(user, money)
 
-        assert_called UserAccountWithdrawEmail.build(user, money)
-        assert_called Mailer.deliver_later(email)
+        assert_called(UserAccountWithdrawEmail.build(user, money))
+        assert_called(Mailer.deliver_later(email))
       end
     end
   end
 
-  defp create_user(_context), do: {:ok, user: insert(:user)}
+  defp create_user(_context), do: {:ok, user: build(:user)}
 
-  defp create_account(%{user: user}), do: {:ok, account: insert(:account, user: user)}
+  defp create_account(%{user: user}), do: {:ok, account: build(:account, user: user)}
 end

@@ -103,7 +103,7 @@ defmodule BankWeb.V1.UserControllerTest do
         |> delete_req_header("authorization")
         |> post("/api/v1/users/authenticate", email: "wrong", password: "wrong")
 
-        assert json_response(conn, 401) == %{"errors" => %{"detail" => "Unauthorized"}}
+      assert json_response(conn, 401) == %{"errors" => %{"detail" => "Unauthorized"}}
     end
   end
 end

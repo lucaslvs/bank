@@ -1,5 +1,0 @@
-styleguide: sourcelevel/linters
-engines:
-  credo:
-    enabled: true
-

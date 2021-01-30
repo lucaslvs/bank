@@ -7,8 +7,8 @@ defmodule Bank.CustomersTest do
   alias Bank.Customers.{Account, User}
 
   describe "open_account/0" do
-    test "Returns a Changeset invalid when the given parameters is empty" do
-      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account(Map.new())
+    test "Returns a Changeset invalid when there aren't parameters" do
+      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account()
     end
   end
 
@@ -34,6 +34,10 @@ defmodule Bank.CustomersTest do
       assert user.name == "User"
       assert user.email == @valid_email
       assert Argon2.check_pass(user, @valid_password)
+    end
+
+    test "Returns a Changeset invalid when the given parameters is empty" do
+      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account(Map.new())
     end
   end
 

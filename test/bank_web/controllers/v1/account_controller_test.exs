@@ -1,50 +1,50 @@
 defmodule BankWeb.V1.AccountControllerTest do
   use BankWeb.ConnCase
 
-  alias Bank.Customers
-  alias Bank.Customers.Account
+  import Bank.Factory
 
-  @create_attrs %{
-    balance: 42,
-    number: "some number"
-  }
-  @update_attrs %{
-    balance: 43,
-    number: "some updated number"
-  }
-  @invalid_attrs %{balance: nil, number: nil}
-
-  def fixture(:account) do
-    {:ok, account} = Customers.create_account(@create_attrs)
-    account
-  end
+  alias BankWeb.Authentication.Guardian
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = insert(:user)
+    account = insert(:account, user: user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> put_req_header("authorization", "Bearer #{token}")
+
+    {:ok, account: account, conn: conn}
   end
 
-  describe "create account" do
-    test "renders account when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_account_path(conn, :create), account: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+  describe "show account" do
+    test "Renders account when the given id is valid", %{conn: conn, account: account} do
+      conn = get(conn, Routes.api_v1_account_path(conn, :show, account.id))
+      account_received = json_response(conn, 200)["account"]
 
-      conn = get(conn, Routes.api_v1_account_path(conn, :show, id))
-
-      assert %{
-               "id" => id,
-               "balance" => 42,
-               "number" => "some number"
-             } = json_response(conn, 200)["data"]
+      assert account_received["id"] == account.id
+      assert account_received["balance"] == Money.to_string(account.balance)
+      assert account_received["number"] == account.number
+      assert account_received["userId"] == account.user_id
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_account_path(conn, :create), account: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
-    end
-  end
+    test "Renders :not_found status when the given id is invalid", %{conn: conn, account: account} do
+      conn = get(conn, Routes.api_v1_account_path(conn, :show, account.id + 1))
 
-  defp create_account(_) do
-    account = fixture(:account)
-    %{account: account}
+      assert json_response(conn, 404) == %{"errors" => %{"detail" => "Not Found"}}
+    end
+
+    test "Renders :unauthorized status when the JWT token isn't in headers", %{
+      conn: conn,
+      account: account
+    } do
+      conn =
+        conn
+        |> delete_req_header("authorization")
+        |> get(Routes.api_v1_account_path(conn, :show, account.id + 1))
+
+      assert json_response(conn, 401) == %{"errors" => %{"detail" => "Unauthenticated"}}
+    end
   end
 end

@@ -6,6 +6,8 @@ defmodule Bank.CustomersTest do
   alias Bank.Customers
   alias Bank.Customers.{Account, User}
 
+  setup [:create_user, :create_account]
+
   describe "open_account/0" do
     test "Returns a Changeset invalid when there aren't parameters" do
       {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account()
@@ -42,8 +44,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_account!/1" do
-    setup [:create_user, :create_account]
-
     test "Returns the account when given id is valid", %{account: account_expected} do
       account_received = Customers.get_account!(account_expected.id)
 
@@ -60,8 +60,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_account/1" do
-    setup [:create_user, :create_account]
-
     test "Returns the account when given id is valid", %{account: account_expected} do
       {:ok, %Account{} = account_received} = Customers.get_account(account_expected.id)
 
@@ -76,8 +74,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_user!/1" do
-    setup :create_user
-
     test "Returns the user when given id is valid", %{user: user_expected} do
       user_received = Customers.get_user!(user_expected.id)
 
@@ -94,8 +90,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_user/1" do
-    setup :create_user
-
     test "Returns the user when the given id is valid", %{user: user_expected} do
       assert {:ok, %User{} = user_received} = Customers.get_user(user_expected.id)
       assert user_expected.id == user_received.id
@@ -109,8 +103,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_user_by!/1" do
-    setup :create_user
-
     test "Returns the user when given parameters is valid", %{user: user_expected} do
       params = Map.take(user_expected, [:id, :name, :email])
       user_received = Customers.get_user_by!(params)
@@ -129,8 +121,6 @@ defmodule Bank.CustomersTest do
   end
 
   describe "get_user_by/1" do
-    setup :create_user
-
     test "Returns the user when given parameters is valid", %{user: user_expected} do
       params = Map.take(user_expected, [:id, :name, :email])
 

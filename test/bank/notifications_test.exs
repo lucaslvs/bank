@@ -5,7 +5,7 @@ defmodule Bank.NotificationsTest do
   alias Bamboo.Email
   alias Bank.Customers.User
   alias Bank.Notifications
-  alias Bank.Notifications.{UserAccountWithdrawEmail, Mailer}
+  alias Bank.Notifications.{Mailer, UserAccountWithdrawEmail}
 
   import Bank.Factory
   import Mock

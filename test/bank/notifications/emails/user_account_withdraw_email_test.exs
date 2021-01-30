@@ -1,4 +1,3 @@
-
 defmodule Bank.Notifications.UserAccountWithdrawEmailTest do
   use Bank.DataCase, async: true
   use Bamboo.Test
@@ -19,11 +18,12 @@ defmodule Bank.Notifications.UserAccountWithdrawEmailTest do
       assert email.to == user.email
       assert email.from == "contact@bank.com"
       assert email.subject == "Saque realizado"
-      assert email.text_body == """
-      Olá, #{user.name}!
 
-      Seu saque foi realizado com sucesso no valor de #{Money.to_string(money)}.
-      """
+      assert email.text_body == """
+             Olá, #{user.name}!
+
+             Seu saque foi realizado com sucesso no valor de #{Money.to_string(money)}.
+             """
     end
   end
 

@@ -34,12 +34,11 @@ defmodule Bank.Customers.Account do
   def changeset(%__MODULE__{} = account, attrs) do
     account
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> assoc_constraint(:user)
-    |> foreign_key_constraint(:user_id)
     |> validate_required(@required_fields)
     |> validate_length(:number, is: 6)
     |> validate_money(:balance)
     |> unique_constraint(:number)
+    |> assoc_constraint(:user)
   end
 
   defp validate_money(changeset, field) do

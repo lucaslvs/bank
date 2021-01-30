@@ -5,6 +5,9 @@ defmodule Bank.Notifications.UserAccountWithdrawEmail do
 
   alias Bank.Customers.User
 
+  @from_email "contact@bank.com"
+  @subject "Saque realizado"
+
   @impl Bank.Notifications.Email
   @spec build(User.t(), Money.t()) :: Bamboo.Email.t()
   def build(%User{name: name, email: email}, %Money{} = money) do
@@ -12,8 +15,8 @@ defmodule Bank.Notifications.UserAccountWithdrawEmail do
 
     new_email()
     |> to(email)
-    |> from("contact@bank.com")
-    |> subject("Saque realizado")
+    |> from(@from_email)
+    |> subject(@subject)
     |> text_body(text_body)
   end
 
@@ -21,9 +24,7 @@ defmodule Bank.Notifications.UserAccountWithdrawEmail do
     """
     Olá, #{name}!
 
-    Seu saque foi realizado com sucesso no valor de #{formated_money(money)}.
+    Seu saque foi realizado com sucesso no valor de #{Money.to_string(money)}.
     """
   end
-
-  defp formated_money(money), do: Money.to_string(money)
 end

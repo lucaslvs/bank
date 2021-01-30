@@ -78,6 +78,18 @@ defmodule Bank.CustomersTest do
     end
   end
 
+  # describe "open_account/1" do
+  #   setup [:create_user, :create_account]
+
+  #   test "" do
+
+  #   end
+
+  #   test "" do
+
+  #   end
+  # end
+
   describe "get_account!/1" do
     setup [:create_user, :create_account]
 

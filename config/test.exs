@@ -20,7 +20,8 @@ config :bank, BankWeb.Endpoint,
 
 config :bank, Bank.Notifications.Mailer, adapter: Bamboo.TestAdapter
 
-config :argon2_elixir, :log_rounds, 4
+# Speed up tests with Argon2 encryption
+config :argon2_elixir, t_cost: 1, m_cost: 8
 
 # Print only warnings and errors during test
 config :logger, level: :warn

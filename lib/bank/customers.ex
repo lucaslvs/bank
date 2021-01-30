@@ -99,8 +99,8 @@ defmodule Bank.Customers do
       ** (Ecto.NoResultsError)
 
   """
-  @spec get_user!(integer()) :: User.t() | %Ecto.NoResultsError{}
-  def get_user!(id) when is_integer(id) do
+  @spec get_user!(binary() | integer()) :: User.t() | %Ecto.NoResultsError{}
+  def get_user!(id) when is_integer(id) or is_binary(id) do
     User
     |> Repo.get!(id)
     |> Repo.preload(:account)
@@ -118,8 +118,8 @@ defmodule Bank.Customers do
       {:error, :not_found}
 
   """
-  @spec get_user(integer()) :: {:ok, User.t()} | {:error, :not_found}
-  def get_user(id) when is_integer(id) do
+  @spec get_user(binary() | integer()) :: {:ok, User.t()} | {:error, :not_found}
+  def get_user(id) when is_integer(id) or is_binary(id) do
     {:ok, get_user!(id)}
   rescue
     Ecto.NoResultsError ->

@@ -52,7 +52,6 @@ defmodule Bank.Customers.User do
     |> validate_confirmation(:email, required: true)
     |> validate_confirmation(:password, required: true)
     |> put_password_hash()
-    |> cast_assoc(:account, with: &Account.changeset/2, required: true)
   end
 
   defp put_password_hash(changeset) do

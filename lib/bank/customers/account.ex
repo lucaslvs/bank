@@ -7,8 +7,7 @@ defmodule Bank.Customers.Account do
 
   alias Bank.Customers.User
 
-  @required_fields [:number]
-  @optional_fields [:balance, :user_id]
+  @required_fields [:number, :balance, :user_id]
   @default_balance_value 100_000
 
   @type t :: %__MODULE__{
@@ -33,7 +32,7 @@ defmodule Bank.Customers.Account do
   @doc false
   def changeset(%__MODULE__{} = account, attrs) do
     account
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> validate_length(:number, is: 6)
     |> validate_money(:balance)

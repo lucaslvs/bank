@@ -10,7 +10,7 @@ defmodule Bank.CustomersTest do
 
   describe "open_account/0" do
     test "Returns a Changeset invalid when there aren't parameters" do
-      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account()
+      assert {:error, :user, %Ecto.Changeset{valid?: false}, %{}} = Customers.open_account()
     end
   end
 
@@ -18,28 +18,79 @@ defmodule Bank.CustomersTest do
     @valid_email "user@email.com"
     @valid_password "123456"
 
-    @valid_params %{
+    @user_valid_params %{
       name: "User",
       email: @valid_email,
       email_confirmation: @valid_email,
       password: @valid_password,
-      password_confirmation: @valid_password,
-      account: %{number: "654321", balance: 100_000}
+      password_confirmation: @valid_password
     }
 
-    test "Returns a user and account when the given parameters is valid" do
-      assert {:ok, %User{account: %Account{} = account} = user} =
-               Customers.open_account(@valid_params)
+    test "Returns a Changeset invalid when only valid parameters is from user" do
+      account_opening = Customers.open_account(@user_valid_params)
 
-      assert account.number == "654321"
-      assert account.balance == %Money{amount: 100_000, currency: :BRL}
+      assert {:error, :account, %Ecto.Changeset{valid?: false}, %{user: user}} = account_opening
+      assert %User{} = user
       assert user.name == "User"
       assert user.email == @valid_email
       assert Argon2.check_pass(user, @valid_password)
     end
 
     test "Returns a Changeset invalid when the given parameters is empty" do
-      {:error, %Ecto.Changeset{valid?: false}} = Customers.open_account(Map.new())
+      account_opening = Customers.open_account(Map.new())
+
+      assert {:error, :user, %Ecto.Changeset{valid?: false}, %{}} = account_opening
+    end
+  end
+
+  describe "open_account/2" do
+    @valid_email "user@email.com"
+    @valid_password "123456"
+
+    @user_valid_params %{
+      name: "User",
+      email: @valid_email,
+      email_confirmation: @valid_email,
+      password: @valid_password,
+      password_confirmation: @valid_password
+    }
+
+    @account_valid_params %{number: "654321", balance: 100_000}
+
+    test "Returns a user and account when the given parameters is valid" do
+      account_opening = Customers.open_account(@user_valid_params, @account_valid_params)
+
+      assert {:ok, %{account: %Account{} = account, user: %User{} = user}} = account_opening
+      assert user.name == "User"
+      assert user.email == @valid_email
+      assert Argon2.check_pass(user, @valid_password)
+      assert account.user_id == user.id
+      assert account.number == "654321"
+      assert account.balance == %Money{amount: 100_000, currency: :BRL}
+    end
+
+    test "Returns a Changeset invalid when the given parameters is empty" do
+      account_opening = Customers.open_account(Map.new())
+
+      assert {:error, :user, %Ecto.Changeset{valid?: false}, %{}} = account_opening
+    end
+  end
+
+  describe "account_changeset/1" do
+    test "Returns a invalid changeset when the parameters are empty", %{user: user} do
+      assert %Ecto.Changeset{valid?: false} = Customers.account_changeset(user)
+    end
+  end
+
+  describe "account_changeset/2" do
+    @valid_params %{number: "654321", balance: 100_000}
+
+    test "Returns a invalid changeset when the account parameters are empty", %{user: user} do
+      assert %Ecto.Changeset{valid?: false} = Customers.account_changeset(user, Map.new())
+    end
+
+    test "Returns a valid changeset when the account parameters are valid", %{user: user} do
+      assert %Ecto.Changeset{valid?: true} = Customers.account_changeset(user, @valid_params)
     end
   end
 

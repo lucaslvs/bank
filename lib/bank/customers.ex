@@ -7,6 +7,7 @@ defmodule Bank.Customers do
 
   alias Bank.Customers.{Account, User}
   alias Bank.Repo
+  alias Ecto.Multi
 
   @doc """
   Creates a `Bank.Customers.User` and `Bank.Customers.Account` by the given `attrs`.
@@ -39,11 +40,20 @@ defmodule Bank.Customers do
       iex> open_account(%{field: "bad_value"})
       {:error, %Ecto.Changeset{}}
   """
-  @spec open_account(map() | none()) :: {:ok, User.t()} | {:error, Ecto.Changeset.t()}
-  def open_account(attrs \\ %{}) when is_map(attrs) do
-    attrs
-    |> User.create_changeset()
-    |> Repo.insert()
+  @spec open_account(map() | none(), map() | none()) :: {:ok, any()} | {:error, any()}
+  def open_account(user_params \\ %{}, account_params \\ %{})
+      when is_map(user_params) and is_map(account_params) do
+    Multi.new()
+    |> Multi.insert(:user, User.create_changeset(user_params))
+    |> Multi.insert(:account, &account_changeset(Map.get(&1, :user), account_params))
+    |> Repo.transaction()
+  end
+
+  @spec account_changeset(User.t(), map() | none()) :: Ecto.Changeset.t()
+  def account_changeset(%User{} = user, params \\ %{}) when is_map(params) do
+    user
+    |> Ecto.build_assoc(:account)
+    |> Account.changeset(params)
   end
 
   @doc """

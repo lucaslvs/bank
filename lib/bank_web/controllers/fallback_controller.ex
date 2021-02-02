@@ -7,6 +7,13 @@ defmodule BankWeb.FallbackController do
   use BankWeb, :controller
 
   # This clause handles errors returned by Ecto's insert/update/delete.
+  def call(conn, {:error, operation, %Ecto.Changeset{} = changeset, _}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(BankWeb.ChangesetView)
+    |> render("error.json", operation: operation, changeset: changeset)
+  end
+
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)

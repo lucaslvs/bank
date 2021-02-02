@@ -58,7 +58,7 @@ defmodule BankWeb.V1.AccountControllerTest do
   describe "show account" do
     test "Renders account when the given id is valid", %{conn: conn, account: account} do
       conn = get(conn, Routes.api_v1_account_path(conn, :show, account.id))
-      account_received = json_response(conn, 200)["account"]
+      assert account_received = json_response(conn, 200)["account"]
 
       assert account_received["id"] == account.id
       assert account_received["balance"] == Money.to_string(account.balance)

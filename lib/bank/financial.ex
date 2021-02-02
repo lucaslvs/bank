@@ -6,8 +6,18 @@ defmodule Bank.Financial do
   import Ecto.Query, warn: false
 
   alias Bank.Customers.Account
+  alias Bank.Financial.Operation.Withdraw
   alias Bank.Financial.Transaction
   alias Bank.Repo
+
+  @spec withdrawn(Account.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def withdrawn(%Account{} = account, amount) when is_integer(amount) do
+    Map.new()
+    |> Map.put(:account, account)
+    |> Map.put(:amount, Money.new(amount))
+    |> Withdraw.build()
+    |> Repo.transaction()
+  end
 
   @doc """
   Returns the list of transactions.

@@ -6,6 +6,7 @@ defmodule Bank.Customers.Account do
   import Ecto.Changeset
 
   alias Bank.Customers.User
+  alias Bank.Financial.Transaction
 
   @required_fields [:number, :balance, :user_id]
   @default_balance_value 100_000
@@ -24,6 +25,7 @@ defmodule Bank.Customers.Account do
     field :number, :string, null: false
 
     belongs_to :user, User
+    has_many :transactions, Transaction
 
     timestamps()
   end

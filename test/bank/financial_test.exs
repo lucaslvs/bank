@@ -40,13 +40,19 @@ defmodule Bank.FinancialTest do
 
     test "update_transaction/2 with valid data updates the transaction" do
       transaction = transaction_fixture()
-      assert {:ok, %Transaction{} = transaction} = Financial.update_transaction(transaction, @update_attrs)
+
+      assert {:ok, %Transaction{} = transaction} =
+               Financial.update_transaction(transaction, @update_attrs)
+
       assert transaction.amount == 43
     end
 
     test "update_transaction/2 with invalid data returns error changeset" do
       transaction = transaction_fixture()
-      assert {:error, %Ecto.Changeset{}} = Financial.update_transaction(transaction, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Financial.update_transaction(transaction, @invalid_attrs)
+
       assert transaction == Financial.get_transaction!(transaction.id)
     end
 

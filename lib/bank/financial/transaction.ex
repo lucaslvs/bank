@@ -10,12 +10,12 @@ defmodule Bank.Financial.Transaction do
   @required_fields [:amount, :account_id]
 
   @type t() :: %__MODULE__{
-    id: integer(),
-    account: Account.t() | %Ecto.Association.NotLoaded{},
-    amount: Money.Ecto.Amount.Type.type(),
-    inserted_at: NaiveDateTime.t(),
-    updated_at: NaiveDateTime.t()
-  }
+          id: integer(),
+          account: Account.t() | %Ecto.Association.NotLoaded{},
+          amount: Money.Ecto.Amount.Type.type(),
+          inserted_at: NaiveDateTime.t(),
+          updated_at: NaiveDateTime.t()
+        }
 
   schema "transactions" do
     field :amount, Money.Ecto.Amount.Type, null: false

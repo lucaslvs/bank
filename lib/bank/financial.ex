@@ -6,7 +6,7 @@ defmodule Bank.Financial do
   import Ecto.Query, warn: false
 
   alias Bank.Customers.Account
-  alias Bank.Financial.Operation.Withdraw
+  alias Bank.Financial.Operation.{Deposit, Withdraw}
   alias Bank.Financial.Transaction
   alias Bank.Repo
 
@@ -16,6 +16,15 @@ defmodule Bank.Financial do
     |> Map.put(:account, account)
     |> Map.put(:amount, Money.new(amount))
     |> Withdraw.build()
+    |> Repo.transaction()
+  end
+
+  @spec deposit(Account.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def deposit(%Account{} = account, amount) when is_integer(amount) do
+    Map.new()
+    |> Map.put(:account, account)
+    |> Map.put(:amount, Money.new(amount))
+    |> Deposit.build()
     |> Repo.transaction()
   end
 

@@ -19,10 +19,12 @@ defmodule BankWeb.Router do
 
       # coveralls-ignore-start
       options "/accounts", AccountController, :options
+      options "/tokens", TokenController, :options
 
       # coveralls-ignore-stop
 
       resources "/accounts", AccountController, only: [:create]
+      resources "/tokens", TokenController, only: [:create]
     end
 
     scope "/v1", V1, as: :v1 do

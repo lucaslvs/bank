@@ -44,13 +44,15 @@ defmodule BankWeb.V1.AccountControllerTest do
              } = account_opening["user"]
 
       assert %{
-        "number" => "654321",
-        "balance" => "R$ 1,000.00"
-      } = account_opening["account"]
+               "number" => "654321",
+               "balance" => "R$ 1,000.00"
+             } = account_opening["account"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.api_v1_account_path(conn, :create), user: Map.new(), account: Map.new())
+      conn =
+        post(conn, Routes.api_v1_account_path(conn, :create), user: Map.new(), account: Map.new())
+
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

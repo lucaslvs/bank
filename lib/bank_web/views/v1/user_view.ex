@@ -12,8 +12,4 @@ defmodule BankWeb.V1.UserView do
       updated_at: user.updated_at
     }
   end
-
-  def render("user_token.json", %{token: token}) do
-    %{token: token}
-  end
 end

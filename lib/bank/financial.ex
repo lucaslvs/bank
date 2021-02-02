@@ -6,6 +6,7 @@ defmodule Bank.Financial do
   import Ecto.Query, warn: false
 
   alias Bank.Customers.Account
+
   alias Bank.Financial.Operation.{Deposit, Withdraw}
   alias Bank.Financial.Transaction
   alias Bank.Repo

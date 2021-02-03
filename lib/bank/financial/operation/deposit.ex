@@ -9,19 +9,18 @@ defmodule Bank.Financial.Operation.Deposit do
   @impl Bank.Financial.Operation
   @spec build(%{account: Account.t(), amount: Money.t()}) :: Multi.t()
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
-    deposit_transaction = &deposit_changeset(Map.get(&1, :deposit_account), amount)
-
     Multi.new()
-    |> Multi.update(:deposit_account, update_account_changeset(account, amount))
-    |> Multi.insert(:deposit_transaction, deposit_transaction)
+    |> Multi.update(:deposit_account, add_account_balance(account, amount))
+    |> Multi.insert(:deposit_transaction, &create_deposit_transaction(&1, amount))
   end
 
-  defp update_account_changeset(%Account{balance: balance} = account, amount) do
+  defp add_account_balance(%Account{balance: balance} = account, amount) do
     Account.changeset(account, Map.new(balance: Money.add(balance, amount)))
   end
 
-  defp deposit_changeset(%Account{} = account, amount) do
-    account
+  defp create_deposit_transaction(changes, amount) do
+    changes
+    |> Map.get(:deposit_account)
     |> Ecto.build_assoc(:transactions)
     |> Transaction.changeset(Map.new(amount: amount))
   end

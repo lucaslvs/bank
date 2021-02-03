@@ -5,7 +5,10 @@ defmodule Bank.Financial.Operation.LockAccountByNumber do
 
   alias Bank.Customers.Account
 
+  @type lock_account_by_number_params() :: %{key: atom(), number: String.t()}
+
   @impl Bank.Financial.Operation
+  @spec build(lock_account_by_number_params()) :: Ecto.Multi.t()
   def build(%{key: key, number: number}) when is_atom(key) and is_binary(number) do
     Multi.run(Multi.new(), key, fn _, _ ->
       Account

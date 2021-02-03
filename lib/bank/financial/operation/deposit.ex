@@ -9,10 +9,10 @@ defmodule Bank.Financial.Operation.Deposit do
   @impl Bank.Financial.Operation
   @spec build(%{account: Account.t(), amount: Money.t()}) :: Multi.t()
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
-    deposit_transaction = &deposit_changeset(Map.get(&1, :account_deposit), amount)
+    deposit_transaction = &deposit_changeset(Map.get(&1, :deposit_account), amount)
 
     Multi.new()
-    |> Multi.update(:account_deposit, update_account_changeset(account, amount))
+    |> Multi.update(:deposit_account, update_account_changeset(account, amount))
     |> Multi.insert(:deposit_transaction, deposit_transaction)
   end
 

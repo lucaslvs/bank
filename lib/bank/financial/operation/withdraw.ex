@@ -9,11 +9,11 @@ defmodule Bank.Financial.Operation.Withdraw do
   @impl Bank.Financial.Operation
   @spec build(%{account: Account.t(), amount: Money.t()}) :: Multi.t()
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
-    withdraw_transaction = &withdraw_changeset(Map.get(&1, :account_withdraw), amount)
+    withdrawal_transaction = &withdraw_changeset(Map.get(&1, :withdrawal_account), amount)
 
     Multi.new()
-    |> Multi.update(:account_withdraw, update_account_changeset(account, amount))
-    |> Multi.insert(:withdraw_transaction, withdraw_transaction)
+    |> Multi.update(:withdrawal_account, update_account_changeset(account, amount))
+    |> Multi.insert(:withdrawal_transaction, withdrawal_transaction)
   end
 
   defp update_account_changeset(%Account{balance: balance} = account, amount) do

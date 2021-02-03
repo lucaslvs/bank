@@ -17,8 +17,8 @@ defmodule Bank.Financial do
       when is_binary(origin_account_number) and is_binary(source_account_number) and
              is_integer(amount) do
     Multi.new()
-    |> Multi.merge(&lock_account_operation(&1, :origin_account, origin_account_number))
-    |> Multi.merge(&lock_account_operation(&1, :source_account, source_account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :origin_account, origin_account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :source_account, source_account_number))
     |> Multi.merge(&Transfer.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
   end
@@ -26,7 +26,7 @@ defmodule Bank.Financial do
   @spec withdrawn(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def withdrawn(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     Multi.new()
-    |> Multi.merge(&lock_account_operation(&1, :account, account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
     |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
   end
@@ -34,12 +34,12 @@ defmodule Bank.Financial do
   @spec deposit(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def deposit(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     Multi.new()
-    |> Multi.merge(&lock_account_operation(&1, :account, account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
     |> Multi.merge(&Deposit.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
   end
 
-  defp lock_account_operation(changes, key, number) do
+  defp lock_account_by_number(changes, key, number) do
     changes
     |> Map.put(:key, key)
     |> Map.put(:number, number)

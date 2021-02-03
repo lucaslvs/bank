@@ -13,6 +13,9 @@ defmodule Bank.Financial.Operation do
     quote do
       @behaviour Bank.Financial.Operation
 
+      import Ecto.Query, warn: false
+
+      alias Bank.Repo
       alias Ecto.Multi
     end
   end

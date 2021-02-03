@@ -7,37 +7,43 @@ defmodule Bank.Financial do
 
   alias Bank.Customers.Account
 
-  alias Bank.Financial.Operation.{Deposit, Transfer, Withdraw}
+  alias Bank.Financial.Operation.{Deposit, LockAccountByNumber, Transfer, Withdraw}
   alias Bank.Financial.Transaction
   alias Bank.Repo
+  alias Ecto.Multi
 
-  @spec transfer(Account.t(), Account.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def transfer(%Account{} = origin_account, %Account{} = source_account, amount)
-      when is_integer(amount) do
-    Map.new()
-    |> Map.put(:origin_account, origin_account)
-    |> Map.put(:source_account, source_account)
-    |> Map.put(:amount, Money.new(amount))
-    |> Transfer.build()
+  @spec transfer(String.t(), String.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def transfer(origin_account_number, source_account_number, amount)
+      when is_binary(origin_account_number) and is_binary(source_account_number) and
+             is_integer(amount) do
+    Multi.new()
+    |> Multi.merge(&lock_account_operation(&1, :origin_account, origin_account_number))
+    |> Multi.merge(&lock_account_operation(&1, :source_account, source_account_number))
+    |> Multi.merge(&Transfer.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
   end
 
-  @spec withdrawn(Account.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def withdrawn(%Account{} = account, amount) when is_integer(amount) do
-    Map.new()
-    |> Map.put(:account, account)
-    |> Map.put(:amount, Money.new(amount))
-    |> Withdraw.build()
+  @spec withdrawn(String.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def withdrawn(account_number, amount) when is_binary(account_number) and is_integer(amount) do
+    Multi.new()
+    |> Multi.merge(&lock_account_operation(&1, :account, account_number))
+    |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
   end
 
-  @spec deposit(Account.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def deposit(%Account{} = account, amount) when is_integer(amount) do
-    Map.new()
-    |> Map.put(:account, account)
-    |> Map.put(:amount, Money.new(amount))
-    |> Deposit.build()
+  @spec deposit(String.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def deposit(account_number, amount) when is_binary(account_number) and is_integer(amount) do
+    Multi.new()
+    |> Multi.merge(&lock_account_operation(&1, :account, account_number))
+    |> Multi.merge(&Deposit.build(Map.put(&1, :amount, Money.new(amount))))
     |> Repo.transaction()
+  end
+
+  defp lock_account_operation(changes, key, number) do
+    changes
+    |> Map.put(:key, key)
+    |> Map.put(:number, number)
+    |> LockAccountByNumber.build()
   end
 
   @doc """

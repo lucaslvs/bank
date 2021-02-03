@@ -6,8 +6,10 @@ defmodule Bank.Financial.Operation.Withdraw do
   alias Bank.Customers.Account
   alias Bank.Financial.Transaction
 
+  @type withdraw_params() :: %{account: Account.t(), amount: Money.t()}
+
   @impl Bank.Financial.Operation
-  @spec build(%{account: Account.t(), amount: Money.t()}) :: Multi.t()
+  @spec build(withdraw_params()) :: Multi.t()
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
     Multi.new()
     |> Multi.update(:withdrawal_account, subtract_account_balance(account, amount))

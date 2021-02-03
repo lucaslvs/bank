@@ -11,14 +11,14 @@ defmodule Bank.Financial.Operation.Withdraw do
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
     Multi.new()
     |> Multi.update(:withdrawal_account, subtract_account_balance(account, amount))
-    |> Multi.insert(:withdrawal_transaction, &create_transaction(&1, amount))
+    |> Multi.insert(:withdrawal_transaction, &create_withdrawal_transaction(&1, amount))
   end
 
   defp subtract_account_balance(%Account{balance: balance} = account, amount) do
     Account.changeset(account, Map.new(balance: Money.subtract(balance, amount)))
   end
 
-  defp create_transaction(changes, amount) do
+  defp create_withdrawal_transaction(changes, amount) do
     changes
     |> Map.get(:withdrawal_account)
     |> Ecto.build_assoc(:transactions)

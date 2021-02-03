@@ -20,15 +20,21 @@ defmodule Bank.Financial.Operation.Transfer do
         amount: %Money{} = amount
       }) do
     Multi.new()
-    |> Multi.merge(fn _changes -> merge_withdraw_operation(origin_account, amount) end)
-    |> Multi.merge(fn _changes -> merge_deposit_operation(source_account, amount) end)
+    |> Multi.merge(&withdraw(&1, origin_account, amount))
+    |> Multi.merge(&deposit(&1, source_account, amount))
   end
 
-  defp merge_withdraw_operation(origin_account, amount) do
-    Withdraw.build(Map.new(account: origin_account, amount: amount))
+  defp withdraw(_changes, origin_account, amount) do
+    Map.new()
+    |> Map.put(:account, origin_account)
+    |> Map.put(:amount, amount)
+    |> Withdraw.build()
   end
 
-  defp merge_deposit_operation(source_account, amount) do
-    Deposit.build(Map.new(account: source_account, amount: amount))
+  defp deposit(_changes, source_account, amount) do
+    Map.new()
+    |> Map.put(:account, source_account)
+    |> Map.put(:amount, amount)
+    |> Deposit.build()
   end
 end

@@ -7,9 +7,20 @@ defmodule Bank.Financial do
 
   alias Bank.Customers.Account
 
-  alias Bank.Financial.Operation.{Deposit, Withdraw}
+  alias Bank.Financial.Operation.{Deposit, Transfer, Withdraw}
   alias Bank.Financial.Transaction
   alias Bank.Repo
+
+  @spec transfer(Account.t(), Account.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def transfer(%Account{} = origin_account, %Account{} = source_account, amount)
+      when is_integer(amount) do
+    Map.new()
+    |> Map.put(:origin_account, origin_account)
+    |> Map.put(:source_account, source_account)
+    |> Map.put(:amount, Money.new(amount))
+    |> Transfer.build()
+    |> Repo.transaction()
+  end
 
   @spec withdrawn(Account.t(), integer()) :: {:ok, any()} | {:error, any()}
   def withdrawn(%Account{} = account, amount) when is_integer(amount) do

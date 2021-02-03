@@ -30,14 +30,6 @@ defmodule Bank.Financial.Transaction do
     transaction
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
-    |> validate_amount()
     |> assoc_constraint(:account)
-  end
-
-  defp validate_amount(changeset) do
-    validate_change(changeset, :amount, fn
-      _, %Money{amount: amount} when amount > 0 -> []
-      _, _ -> [amount: "must be greater than 0"]
-    end)
   end
 end

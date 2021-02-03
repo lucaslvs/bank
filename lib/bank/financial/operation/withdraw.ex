@@ -23,6 +23,6 @@ defmodule Bank.Financial.Operation.Withdraw do
   defp withdraw_changeset(%Account{} = account, amount) do
     account
     |> Ecto.build_assoc(:transactions)
-    |> Transaction.changeset(Map.new(amount: amount))
+    |> Transaction.changeset(Map.new(amount: Money.neg(amount)))
   end
 end

@@ -50,10 +50,6 @@ defmodule BankWeb.V1.AccountController do
          %Account{number: origin_number} <- account,
          {:ok, transfer_result} <- Financial.transfer(origin_number, source_number, amount) do
       render(conn, "transfer.json", transfer_result)
-    else
-      error ->
-        require IEx; IEx.pry()
-        error
     end
   end
 

@@ -6,7 +6,6 @@ defmodule BankWeb.V1.AccountController do
   alias Bank.Customers
   alias Bank.Customers.{Account, User}
   alias Bank.Financial
-  alias Bank.Notifications
   alias BankWeb.Authentication.Guardian
 
   action_fallback BankWeb.FallbackController
@@ -28,10 +27,9 @@ defmodule BankWeb.V1.AccountController do
 
   def withdraw(conn, %{"amount" => amount}) do
     with token <- Guardian.Plug.current_token(conn),
-         {:ok, %User{account: account} = user, _} <- Guardian.resource_from_token(token),
+         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
          %Account{number: number} <- account,
-         {:ok, withdrawal_result} <- Financial.withdraw(number, amount),
-         %Bamboo.Email{} <- send_user_account_withdraw_email(user, amount) do
+         {:ok, withdrawal_result} <- Financial.withdraw(number, amount) do
       render(conn, "withdraw.json", withdrawal_result)
     end
   end
@@ -52,9 +50,5 @@ defmodule BankWeb.V1.AccountController do
          {:ok, transfer_result} <- Financial.transfer(origin_number, source_number, amount) do
       render(conn, "transfer.json", transfer_result)
     end
-  end
-
-  defp send_user_account_withdraw_email(user, amount) do
-    Notifications.send_user_account_withdraw_email(user, Money.new(amount))
   end
 end

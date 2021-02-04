@@ -3,7 +3,7 @@ defmodule BankWeb.V1.AccountView do
   use BankWeb, :view
   # coveralls-ignore-stop
 
-  alias BankWeb.V1.{UserView, TransactionView}
+  alias BankWeb.V1.{TransactionView, UserView}
 
   def render("create.json", %{account: account, user: user}) do
     %{

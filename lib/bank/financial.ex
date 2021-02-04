@@ -9,6 +9,7 @@ defmodule Bank.Financial do
 
   alias Bank.Financial.Operation.{Deposit, LockAccountByNumber, Transfer, Withdraw}
   alias Bank.Financial.Transaction
+  alias Bank.Notifications
   alias Bank.Repo
   alias Ecto.Multi
 
@@ -25,10 +26,24 @@ defmodule Bank.Financial do
 
   @spec withdraw(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def withdraw(account_number, amount) when is_binary(account_number) and is_integer(amount) do
-    Multi.new()
-    |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
-    |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, Money.new(amount))))
-    |> Repo.transaction()
+    amount = Money.new(amount)
+
+    withdrawal_result =
+      Multi.new()
+      |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
+      |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, amount)))
+      |> Repo.transaction()
+
+    case withdrawal_result do
+      {:ok, %{withdrawal_account: account}} ->
+        account
+        |> Repo.preload(:user)
+        |> Map.get(:user)
+        |> Notifications.send_user_account_withdraw_email(amount)
+
+      withdrawal_result ->
+        withdrawal_result
+    end
   end
 
   @spec deposit(String.t(), integer()) :: {:ok, any()} | {:error, any()}

@@ -19,8 +19,9 @@ defmodule BankWeb.V1.AccountController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    with {:ok, %Account{} = account} <- Customers.get_account(id) do
+  def show(conn, _params) do
+    with token <- Guardian.Plug.current_token(conn),
+         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token) do
       render(conn, "show.json", account: account)
     end
   end

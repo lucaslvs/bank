@@ -33,4 +33,11 @@ defmodule BankWeb.V1.AccountView do
       transaction: render_one(transaction, TransactionView, "transaction.json")
     }
   end
+
+  def render("deposit.json", %{deposit_account: account, deposit_transaction: transaction}) do
+    %{
+      account: render_one(account, __MODULE__, "account.json"),
+      transaction: render_one(transaction, TransactionView, "transaction.json")
+    }
+  end
 end

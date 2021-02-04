@@ -33,11 +33,13 @@ defmodule BankWeb.Router do
       # coveralls-ignore-start
       options "/accounts/:id", AccountController, :options
       options "/accounts/withdraw", AccountController, :options
+      options "/accounts/deposit", AccountController, :options
 
       # coveralls-ignore-stop
 
       resources "/accounts", AccountController, only: [:show], singleton: true do
         post "/withdraw", AccountController, :withdraw
+        post "/deposit", AccountController, :deposit
       end
     end
   end

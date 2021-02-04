@@ -35,6 +35,15 @@ defmodule BankWeb.V1.AccountController do
     end
   end
 
+  def deposit(conn, %{"amount" => amount}) do
+    with token <- Guardian.Plug.current_token(conn),
+         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
+         %Account{number: number} <- account,
+         {:ok, deposit_result} <- Financial.deposit(number, amount) do
+    render(conn, "deposit.json", deposit_result)
+    end
+  end
+
   defp send_user_account_withdraw_email(user, amount) do
     Notifications.send_user_account_withdraw_email(user, Money.new(amount))
   end

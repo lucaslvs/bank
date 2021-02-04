@@ -23,8 +23,8 @@ defmodule Bank.Financial do
     |> Repo.transaction()
   end
 
-  @spec withdrawn(String.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def withdrawn(account_number, amount) when is_binary(account_number) and is_integer(amount) do
+  @spec withdraw(String.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def withdraw(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     Multi.new()
     |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
     |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, Money.new(amount))))

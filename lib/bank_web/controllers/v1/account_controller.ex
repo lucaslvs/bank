@@ -30,7 +30,7 @@ defmodule BankWeb.V1.AccountController do
     with token <- Guardian.Plug.current_token(conn),
          {:ok, %User{account: account} = user, _} <- Guardian.resource_from_token(token),
          %Account{number: number} <- account,
-         {:ok, withdrawal_result} <- Financial.withdrawn(number, amount),
+         {:ok, withdrawal_result} <- Financial.withdraw(number, amount),
          %Bamboo.Email{} <- send_user_account_withdraw_email(user, amount) do
       render(conn, "withdraw.json", withdrawal_result)
     end

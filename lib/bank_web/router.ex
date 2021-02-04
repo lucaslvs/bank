@@ -40,6 +40,7 @@ defmodule BankWeb.Router do
       resources "/accounts", AccountController, only: [:show], singleton: true do
         post "/withdraw", AccountController, :withdraw
         post "/deposit", AccountController, :deposit
+        post "/transfer", AccountController, :transfer
       end
     end
   end

@@ -27,6 +27,13 @@ defmodule BankWeb.V1.AccountView do
     }
   end
 
+  def render("transfer.json", params) do
+    %{
+      origin: render("withdraw.json", params),
+      source: render("deposit.json", params)
+    }
+  end
+
   def render("withdraw.json", %{withdrawal_account: account, withdrawal_transaction: transaction}) do
     %{
       account: render_one(account, __MODULE__, "account.json"),

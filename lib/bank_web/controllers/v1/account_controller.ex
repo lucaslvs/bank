@@ -40,7 +40,20 @@ defmodule BankWeb.V1.AccountController do
          {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
          %Account{number: number} <- account,
          {:ok, deposit_result} <- Financial.deposit(number, amount) do
-    render(conn, "deposit.json", deposit_result)
+      render(conn, "deposit.json", deposit_result)
+    end
+  end
+
+  def transfer(conn, %{"source_account_number" => source_number, "amount" => amount}) do
+    with token <- Guardian.Plug.current_token(conn),
+         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
+         %Account{number: origin_number} <- account,
+         {:ok, transfer_result} <- Financial.transfer(origin_number, source_number, amount) do
+      render(conn, "transfer.json", transfer_result)
+    else
+      error ->
+        require IEx; IEx.pry()
+        error
     end
   end
 

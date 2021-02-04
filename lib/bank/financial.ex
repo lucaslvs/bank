@@ -41,6 +41,8 @@ defmodule Bank.Financial do
         |> Map.get(:user)
         |> Notifications.send_user_account_withdraw_email(amount)
 
+        withdrawal_result
+
       withdrawal_result ->
         withdrawal_result
     end

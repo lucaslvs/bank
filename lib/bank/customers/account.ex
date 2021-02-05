@@ -11,6 +11,7 @@ defmodule Bank.Customers.Account do
 
   @required_fields [:number, :balance, :user_id]
   @default_balance_value ~M[100_000]
+  @minimum_balance ~M[0]
 
   @type t :: %__MODULE__{
           id: integer(),
@@ -45,8 +46,8 @@ defmodule Bank.Customers.Account do
 
   defp validate_balance(changeset) do
     validate_change(changeset, :balance, fn _, money ->
-      if Money.compare(money, ~M[0]) == -1 do
-        [balance: "must be greater than or equal to #{Money.to_string(~M[0])}"]
+      if Money.compare(money, @minimum_balance) == -1 do
+        [balance: "must be greater than or equal to #{Money.to_string(@minimum_balance)}"]
       else
         []
       end
@@ -60,14 +61,14 @@ defmodule Bank.Customers.Account do
 
     cond do
       Money.zero?(money) or Money.negative?(money) ->
-        add_error(changeset, :balance, "withdrawal must be greater than #{~M[0]}")
+        add_error(changeset, :balance, "withdrawal must be greater than #{@minimum_balance}")
 
       Money.compare(account.balance, money) == -1 ->
         message = "insufficient balance to withdraw #{Money.to_string(money)}"
         add_error(changeset, :balance, message)
 
       true ->
-        withdrawal_amount = get_field(changeset, :balance, ~M[0])
+        withdrawal_amount = get_field(changeset, :balance, @minimum_balance)
         put_change(changeset, :balance, Money.subtract(account.balance, withdrawal_amount))
     end
   end
@@ -78,9 +79,9 @@ defmodule Bank.Customers.Account do
     changeset = change(account, balance: money)
 
     if Money.zero?(money) or Money.negative?(money) do
-      add_error(changeset, :balance, "deposit must be greater than #{~M[0]}")
+      add_error(changeset, :balance, "deposit must be greater than #{@minimum_balance}")
     else
-      deposit_amount = get_field(changeset, :balance, ~M[0])
+      deposit_amount = get_field(changeset, :balance, @minimum_balance)
       put_change(changeset, :balance, Money.add(account.balance, deposit_amount))
     end
   end

@@ -35,7 +35,7 @@ defmodule Bank.Customers.Account do
   end
 
   @doc false
-  @spec changeset(__MODULE__.t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = account, attrs) do
     account
     |> cast(attrs, @required_fields)
@@ -57,7 +57,7 @@ defmodule Bank.Customers.Account do
   end
 
   @doc false
-  @spec withdraw_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
+  @spec withdraw_changeset(t(), Money.t()) :: Ecto.Changeset.t()
   def withdraw_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
     changeset = change(account, balance: balance)
 
@@ -80,7 +80,7 @@ defmodule Bank.Customers.Account do
   end
 
   @doc false
-  @spec deposit_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
+  @spec deposit_changeset(t(), Money.t()) :: Ecto.Changeset.t()
   def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
     changeset = change(account, balance: balance)
 

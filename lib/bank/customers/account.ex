@@ -46,7 +46,7 @@ defmodule Bank.Customers.Account do
 
   defp validate_balance(changeset) do
     validate_change(changeset, :balance, fn _, money ->
-      if Money.compare(money, @minimum_balance) == -1 do
+      if is_invalid_money?(money) do
         [balance: "must be greater than or equal to #{Money.to_string(@minimum_balance)}"]
       else
         []
@@ -56,33 +56,39 @@ defmodule Bank.Customers.Account do
 
   @doc false
   @spec withdraw_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
-  def withdraw_changeset(%__MODULE__{} = account, %Money{} = money) do
+  def withdraw_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = money) do
     changeset = change(account, balance: money)
 
     cond do
-      Money.zero?(money) or Money.negative?(money) ->
+      is_invalid_money?(money) ->
         add_error(changeset, :balance, "withdrawal must be greater than #{@minimum_balance}")
 
-      Money.compare(account.balance, money) == -1 ->
+      is_insufficient_balance_to_withdraw?(account_balance, money) ->
         message = "insufficient balance to withdraw #{Money.to_string(money)}"
         add_error(changeset, :balance, message)
 
       true ->
         withdrawal_amount = get_field(changeset, :balance, @minimum_balance)
-        put_change(changeset, :balance, Money.subtract(account.balance, withdrawal_amount))
+        put_change(changeset, :balance, Money.subtract(account_balance, withdrawal_amount))
     end
+  end
+
+  defp is_insufficient_balance_to_withdraw?(account_balance, money) do
+    Money.compare(account_balance, money) == -1
   end
 
   @doc false
   @spec deposit_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
-  def deposit_changeset(%__MODULE__{} = account, %Money{} = money) do
+  def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = money) do
     changeset = change(account, balance: money)
 
-    if Money.zero?(money) or Money.negative?(money) do
+    if is_invalid_money?(money) do
       add_error(changeset, :balance, "deposit must be greater than #{@minimum_balance}")
     else
       deposit_amount = get_field(changeset, :balance, @minimum_balance)
-      put_change(changeset, :balance, Money.add(account.balance, deposit_amount))
+      put_change(changeset, :balance, Money.add(account_balance, deposit_amount))
     end
   end
+
+  defp is_invalid_money?(%Money{} = money), do: Money.zero?(money) or Money.negative?(money)
 end

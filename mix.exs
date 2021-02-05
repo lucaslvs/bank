@@ -56,6 +56,7 @@ defmodule Bank.MixProject do
       {:casex, "~> 0.4.0"},
       {:cors_plug, "~> 2.0"},
       {:bamboo, "~> 1.6"},
+      {:scrivener_ecto, "~> 2.7"},
       {:mock, "~> 0.3.0", only: :test},
       {:ex_machina, "~> 2.4", only: :test},
       {:excoveralls, "~> 0.13.3", only: :test},

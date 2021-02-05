@@ -57,45 +57,6 @@ defmodule Bank.Customers do
   end
 
   @doc """
-  Gets a single account.
-
-  Raises `Ecto.NoResultsError` if the Account does not exist.
-
-  ## Examples
-
-      iex> get_account!(123)
-      %Account{}
-
-      iex> get_account!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  @spec get_account!(binary() | integer()) :: Account.t() | %Ecto.NoResultsError{}
-  def get_account!(id) when is_integer(id) or is_binary(id) do
-    Repo.get!(Account, id)
-  end
-
-  @doc """
-  Gets a single account.
-
-  ## Examples
-
-      iex> get_account(123)
-      {:ok, %Account{}}
-
-      iex> get_account(456)
-      {:error, :not_found}
-
-  """
-  @spec get_account(binary() | integer()) :: {:ok, Account.t()} | {:error, :not_found}
-  def get_account(id) when is_integer(id) or is_binary(id) do
-    {:ok, get_account!(id)}
-  rescue
-    Ecto.NoResultsError ->
-      {:error, :not_found}
-  end
-
-  @doc """
   Gets a single user.
 
   Raises `Ecto.NoResultsError` if the User does not exist.

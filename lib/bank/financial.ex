@@ -24,30 +24,6 @@ defmodule Bank.Financial do
     |> Repo.transaction()
   end
 
-  @spec withdraw(String.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def withdraw(account_number, amount) when is_binary(account_number) and is_integer(amount) do
-    amount = Money.new(amount)
-
-    withdrawal_result =
-      Multi.new()
-      |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
-      |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, amount)))
-      |> Repo.transaction()
-
-    case withdrawal_result do
-      {:ok, %{withdrawal_account: account}} ->
-        account
-        |> Repo.preload(:user)
-        |> Map.get(:user)
-        |> Notifications.send_user_account_withdraw_email(amount)
-
-        withdrawal_result
-
-      withdrawal_result ->
-        withdrawal_result
-    end
-  end
-
   @spec deposit(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def deposit(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     amount = Money.new(amount)
@@ -56,6 +32,32 @@ defmodule Bank.Financial do
     |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
     |> Multi.merge(&Deposit.build(Map.put(&1, :amount, amount)))
     |> Repo.transaction()
+  end
+
+  @spec withdraw(String.t(), integer()) :: {:ok, any()} | {:error, any()}
+  def withdraw(account_number, amount) when is_binary(account_number) and is_integer(amount) do
+    amount = Money.new(amount)
+
+    Multi.new()
+    |> Multi.merge(&lock_account_by_number(&1, :account, account_number))
+    |> Multi.merge(&Withdraw.build(Map.put(&1, :amount, amount)))
+    |> Repo.transaction()
+    |> maybe_notify_successful_withdrawal()
+  end
+
+  defp maybe_notify_successful_withdrawal(withdrawal_result) do
+    case withdrawal_result do
+      {:ok, %{withdrawal_account: account, withdrawal_transaction: %Transaction{amount: amount}}} ->
+        account
+        |> Repo.preload(:user)
+        |> Map.get(:user)
+        |> Notifications.send_user_account_withdraw_email(Money.abs(amount))
+
+        withdrawal_result
+
+      withdrawal_result ->
+        withdrawal_result
+    end
   end
 
   defp lock_account_by_number(changes, key, number) do

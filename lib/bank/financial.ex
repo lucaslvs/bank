@@ -14,14 +14,14 @@ defmodule Bank.Financial do
   alias Ecto.Multi
 
   @spec transfer(String.t(), String.t(), integer()) :: {:ok, any()} | {:error, any()}
-  def transfer(origin_account_number, source_account_number, amount)
-      when is_binary(origin_account_number) and is_binary(source_account_number) and
+  def transfer(debit_account_number, credit_account_number, amount)
+      when is_binary(debit_account_number) and is_binary(credit_account_number) and
              is_integer(amount) do
     amount = Money.new(amount)
 
     Multi.new()
-    |> Multi.merge(&lock_account_by_number(&1, :origin_account, origin_account_number))
-    |> Multi.merge(&lock_account_by_number(&1, :source_account, source_account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :debit_account, debit_account_number))
+    |> Multi.merge(&lock_account_by_number(&1, :credit_account, credit_account_number))
     |> Multi.merge(&Transfer.build(Map.put(&1, :amount, amount)))
     |> Repo.transaction()
   end

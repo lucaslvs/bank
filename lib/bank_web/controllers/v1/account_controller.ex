@@ -43,7 +43,7 @@ defmodule BankWeb.V1.AccountController do
     end
   end
 
-  def transfer(conn, %{"source_account_number" => source_number, "amount" => amount}) do
+  def transfer(conn, %{"credit_account_number" => source_number, "amount" => amount}) do
     with token <- Guardian.Plug.current_token(conn),
          {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
          %Account{number: origin_number} <- account,

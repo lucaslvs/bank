@@ -66,12 +66,22 @@ defmodule Bank.Customers.Account do
         message = "insufficient balance to withdraw #{Money.to_string(money)}"
         add_error(changeset, :balance, message)
 
-      Money.compare(account.balance, money) == 0 ->
-        put_change(changeset, :balance, ~M[0])
-
       true ->
-        withdrawal_amount = get_change(changeset, :balance)
+        withdrawal_amount = get_field(changeset, :balance, ~M[0])
         put_change(changeset, :balance, Money.subtract(account.balance, withdrawal_amount))
+    end
+  end
+
+  @doc false
+  @spec deposit_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
+  def deposit_changeset(%__MODULE__{} = account, %Money{} = money) do
+    changeset = change(account, balance: money)
+
+    if Money.zero?(money) or Money.negative?(money) do
+      add_error(changeset, :balance, "deposit must be greater than #{~M[0]}")
+    else
+      deposit_amount = get_field(changeset, :balance, ~M[0])
+      put_change(changeset, :balance, Money.add(account.balance, deposit_amount))
     end
   end
 end

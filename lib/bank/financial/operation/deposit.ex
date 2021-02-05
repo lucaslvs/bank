@@ -12,12 +12,8 @@ defmodule Bank.Financial.Operation.Deposit do
   @spec build(deposit_params()) :: Multi.t()
   def build(%{account: %Account{} = account, amount: %Money{} = amount}) do
     Multi.new()
-    |> Multi.update(:deposit_account, add_account_balance(account, amount))
+    |> Multi.update(:deposit_account, Account.deposit_changeset(account, amount))
     |> Multi.insert(:deposit_transaction, &create_deposit_transaction(&1, amount))
-  end
-
-  defp add_account_balance(%Account{balance: balance} = account, amount) do
-    Account.changeset(account, Map.new(balance: Money.add(balance, amount)))
   end
 
   defp create_deposit_transaction(changes, amount) do

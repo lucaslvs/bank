@@ -46,7 +46,7 @@ defmodule Bank.Customers.Account do
 
   defp validate_balance(changeset) do
     validate_change(changeset, :balance, fn _, money ->
-      if is_invalid_money?(money) do
+      if Money.negative?(money) do
         [balance: "must be greater than or equal to #{Money.to_string(@minimum_balance)}"]
       else
         []

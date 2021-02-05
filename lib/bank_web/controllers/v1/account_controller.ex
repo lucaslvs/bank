@@ -4,9 +4,9 @@ defmodule BankWeb.V1.AccountController do
   use BankWeb, :controller
 
   alias Bank.Customers
-  alias Bank.Customers.{Account, User}
+  alias Bank.Customers.Account
   alias Bank.Financial
-  alias BankWeb.Authentication.Guardian
+  alias BankWeb.Authentication
 
   action_fallback BankWeb.FallbackController
 
@@ -19,35 +19,30 @@ defmodule BankWeb.V1.AccountController do
   end
 
   def show(conn, _params) do
-    with token <- Guardian.Plug.current_token(conn),
-         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token) do
+    with {:ok, %Account{} = account} <- Authentication.current_token_user_account(conn) do
       render(conn, "show.json", account: account)
     end
   end
 
   def withdraw(conn, %{"amount" => amount}) do
-    with token <- Guardian.Plug.current_token(conn),
-         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
-         %Account{number: number} <- account,
+    with {:ok, %Account{number: number}} <- Authentication.current_token_user_account(conn),
          {:ok, withdrawal_result} <- Financial.withdraw(number, amount) do
       render(conn, "withdraw.json", withdrawal_result)
     end
   end
 
   def deposit(conn, %{"amount" => amount}) do
-    with token <- Guardian.Plug.current_token(conn),
-         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
-         %Account{number: number} <- account,
+    with {:ok, %Account{number: number}} <- Authentication.current_token_user_account(conn),
          {:ok, deposit_result} <- Financial.deposit(number, amount) do
       render(conn, "deposit.json", deposit_result)
     end
   end
 
-  def transfer(conn, %{"credit_account_number" => source_number, "amount" => amount}) do
-    with token <- Guardian.Plug.current_token(conn),
-         {:ok, %User{account: account}, _} <- Guardian.resource_from_token(token),
-         %Account{number: origin_number} <- account,
-         {:ok, transfer_result} <- Financial.transfer(origin_number, source_number, amount) do
+  def transfer(conn, %{"credit_account_number" => credit_account_number, "amount" => amount}) do
+    with {:ok, %Account{number: debit_account_number}} <-
+           Authentication.current_token_user_account(conn),
+         {:ok, transfer_result} <-
+           Financial.transfer(debit_account_number, credit_account_number, amount) do
       render(conn, "transfer.json", transfer_result)
     end
   end

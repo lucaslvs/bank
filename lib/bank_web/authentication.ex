@@ -2,7 +2,7 @@ defmodule BankWeb.Authentication do
   @moduledoc false
 
   alias Bank.Customers
-  alias Bank.Customers.User
+  alias Bank.Customers.{Account, User}
   alias BankWeb.Authentication.Guardian
 
   @doc """
@@ -31,4 +31,13 @@ defmodule BankWeb.Authentication do
   defp is_valid_user_password?(%User{password_hash: password_hash}, password) do
     Argon2.verify_pass(password, password_hash)
   end
+
+  @spec current_token_user_account(Plug.Conn.t()) :: {:error, :unauthorized} | {:ok, Account.t()}
+  def current_token_user_account(%Plug.Conn{
+        private: %{guardian_default_resource: %User{account: account}}
+      }) do
+    {:ok, account}
+  end
+
+  def current_token_user_account(_conn), do: {:error, :unauthorized}
 end

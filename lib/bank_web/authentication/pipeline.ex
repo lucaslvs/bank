@@ -8,4 +8,5 @@ defmodule BankWeb.Authentication.Pipeline do
 
   plug Guardian.Plug.VerifyHeader
   plug Guardian.Plug.EnsureAuthenticated
+  plug Guardian.Plug.LoadResource, allow_blank: true
 end

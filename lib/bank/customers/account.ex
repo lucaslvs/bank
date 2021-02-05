@@ -43,6 +43,16 @@ defmodule Bank.Customers.Account do
     |> assoc_constraint(:user)
   end
 
+  defp validate_balance(changeset) do
+    validate_change(changeset, :balance, fn _, money ->
+      if Money.compare(money, ~M[0]) == -1 do
+        [balance: "must be greater than or equal to #{Money.to_string(~M[0])}"]
+      else
+        []
+      end
+    end)
+  end
+
   def withdraw_changeset(%__MODULE__{} = account, %Money{} = money) do
     changeset = change(account, balance: money)
 
@@ -61,15 +71,5 @@ defmodule Bank.Customers.Account do
         withdrawal_amount = get_change(changeset, :balance)
         put_change(changeset, :balance, Money.subtract(account.balance, withdrawal_amount))
     end
-  end
-
-  defp validate_balance(changeset) do
-    validate_change(changeset, :balance, fn _, money ->
-      if Money.compare(money, ~M[0]) == -1 do
-        [balance: "must be greater than or equal to #{Money.to_string(~M[0])}"]
-      else
-        []
-      end
-    end)
   end
 end

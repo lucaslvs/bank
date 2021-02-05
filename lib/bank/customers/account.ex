@@ -16,8 +16,10 @@ defmodule Bank.Customers.Account do
   @type t :: %__MODULE__{
           id: integer(),
           user: User.t() | %Ecto.Association.NotLoaded{},
+          user_id: integer(),
           balance: Money.Ecto.Amount.Type.type(),
           number: String.t(),
+          transactions: list(Transaction.t()) | %Ecto.Association.NotLoaded{},
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }

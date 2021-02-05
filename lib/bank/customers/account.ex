@@ -57,6 +57,19 @@ defmodule Bank.Customers.Account do
   end
 
   @doc false
+  @spec deposit_changeset(t(), Money.t()) :: Ecto.Changeset.t()
+  def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
+    changeset = change(account, balance: balance)
+
+    if is_invalid_balance?(balance) do
+      add_error(changeset, :balance, "deposit must be greater than #{@minimum_balance}")
+    else
+      deposit_amount = get_field(changeset, :balance, @minimum_balance)
+      put_change(changeset, :balance, Money.add(account_balance, deposit_amount))
+    end
+  end
+
+  @doc false
   @spec withdraw_changeset(t(), Money.t()) :: Ecto.Changeset.t()
   def withdraw_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
     changeset = change(account, balance: balance)
@@ -77,19 +90,6 @@ defmodule Bank.Customers.Account do
 
   defp is_insufficient_balance_to_withdraw?(account_balance, balance) do
     Money.compare(account_balance, balance) == -1
-  end
-
-  @doc false
-  @spec deposit_changeset(t(), Money.t()) :: Ecto.Changeset.t()
-  def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
-    changeset = change(account, balance: balance)
-
-    if is_invalid_balance?(balance) do
-      add_error(changeset, :balance, "deposit must be greater than #{@minimum_balance}")
-    else
-      deposit_amount = get_field(changeset, :balance, @minimum_balance)
-      put_change(changeset, :balance, Money.add(account_balance, deposit_amount))
-    end
   end
 
   defp is_invalid_balance?(%Money{} = balance) do

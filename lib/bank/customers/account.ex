@@ -31,7 +31,7 @@ defmodule Bank.Customers.Account do
     timestamps()
   end
 
-  @spec changeset(Bank.Customers.Account.t(), map()) :: Ecto.Changeset.t()
+  @spec changeset(__MODULE__.t(), map()) :: Ecto.Changeset.t()
   @doc false
   def changeset(%__MODULE__{} = account, attrs) do
     account
@@ -53,6 +53,7 @@ defmodule Bank.Customers.Account do
     end)
   end
 
+  @spec withdraw_changeset(__MODULE__.t(), Money.t()) :: Ecto.Changeset.t()
   def withdraw_changeset(%__MODULE__{} = account, %Money{} = money) do
     changeset = change(account, balance: money)
 

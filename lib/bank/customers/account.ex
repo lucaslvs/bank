@@ -4,12 +4,13 @@ defmodule Bank.Customers.Account do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Money.Sigils
 
   alias Bank.Customers.User
   alias Bank.Financial.Transaction
 
   @required_fields [:number, :balance, :user_id]
-  @default_balance_value 100_000
+  @default_balance_value ~M[100_000]
 
   @type t :: %__MODULE__{
           id: integer(),
@@ -21,7 +22,7 @@ defmodule Bank.Customers.Account do
         }
 
   schema "accounts" do
-    field :balance, Money.Ecto.Amount.Type, default: Money.new(@default_balance_value)
+    field :balance, Money.Ecto.Amount.Type, default: @default_balance_value
     field :number, :string, null: false
 
     belongs_to :user, User
@@ -37,15 +38,38 @@ defmodule Bank.Customers.Account do
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> validate_length(:number, is: 6)
-    |> validate_money(:balance)
+    |> validate_balance()
     |> unique_constraint(:number)
     |> assoc_constraint(:user)
   end
 
-  defp validate_money(changeset, field) do
-    validate_change(changeset, field, fn
-      _, %Money{amount: amount} when amount >= 0 -> []
-      _, _ -> [amount: "must be greater than or equal to 0"]
+  def withdraw_changeset(%__MODULE__{} = account, %Money{} = money) do
+    changeset = change(account, balance: money)
+
+    cond do
+      Money.zero?(money) or Money.negative?(money) ->
+        add_error(changeset, :balance, "withdrawal must be greater than #{~M[0]}")
+
+      Money.compare(account.balance, money) == -1 ->
+        message = "insufficient balance to withdraw #{Money.to_string(money)}"
+        add_error(changeset, :balance, message)
+
+      Money.compare(account.balance, money) == 0 ->
+        put_change(changeset, :balance, ~M[0])
+
+      true ->
+        withdrawal_amount = get_change(changeset, :balance)
+        put_change(changeset, :balance, Money.subtract(account.balance, withdrawal_amount))
+    end
+  end
+
+  defp validate_balance(changeset) do
+    validate_change(changeset, :balance, fn _, money ->
+      if Money.compare(money, ~M[0]) == -1 do
+        [balance: "must be greater than or equal to #{Money.to_string(~M[0])}"]
+      else
+        []
+      end
     end)
   end
 end

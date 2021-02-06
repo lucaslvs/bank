@@ -34,6 +34,7 @@ defmodule BankWeb.Router do
       options "/accounts/:id", AccountController, :options
       options "/accounts/withdraw", AccountController, :options
       options "/accounts/deposit", AccountController, :options
+      options "/transactions", TransactionController, :options
 
       # coveralls-ignore-stop
 
@@ -42,6 +43,8 @@ defmodule BankWeb.Router do
         post "/deposit", AccountController, :deposit
         post "/transfer", AccountController, :transfer
       end
+
+      resources "/transactions", TransactionController, only: [:index]
     end
   end
 

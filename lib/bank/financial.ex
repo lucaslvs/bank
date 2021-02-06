@@ -7,6 +7,7 @@ defmodule Bank.Financial do
 
   alias Bank.Financial.Operation.{Deposit, LockAccountByNumber, Transfer, Withdraw}
   alias Bank.Financial.Transaction
+  alias Bank.Financial.Transaction.QueryBuilder
   alias Bank.Notifications
   alias Bank.Repo
   alias Ecto.Multi
@@ -67,16 +68,26 @@ defmodule Bank.Financial do
     |> LockAccountByNumber.build()
   end
 
-  @doc """
-  Returns the list of transactions.
+  @spec filter_transactions(map()) :: map()
+  def filter_transactions(params \\ %{}) when is_map(params) do
+    params
+    |> QueryBuilder.filter()
+    |> Repo.paginate(params)
+    |> calculate_and_put_total_amount()
+  end
 
-  ## Examples
+  defp calculate_and_put_total_amount(%Scrivener.Page{entries: transactions} = transactions_page) do
+    total_amount =
+      transactions
+      |> calculate_total_transaction_amount()
+      |> Money.to_string()
 
-      iex> list_transactions()
-      [%Transaction{}, ...]
+    transactions_page
+    |> Map.from_struct()
+    |> Map.put(:total_amount, total_amount)
+  end
 
-  """
-  def list_transactions do
-    Repo.all(Transaction)
+  defp calculate_total_transaction_amount(transactions) do
+    Enum.reduce(transactions, Money.new(0), &Money.add(&2, Money.abs(&1.amount)))
   end
 end

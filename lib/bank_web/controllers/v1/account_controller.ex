@@ -38,11 +38,11 @@ defmodule BankWeb.V1.AccountController do
     end
   end
 
-  def transfer(conn, %{"credit_account_number" => credit_account_number, "amount" => amount}) do
-    with {:ok, %Account{number: debit_account_number}} <-
+  def transfer(conn, %{"target_account_number" => target_account_number, "amount" => amount}) do
+    with {:ok, %Account{number: source_account_number}} <-
            Authentication.current_token_user_account(conn),
          {:ok, transfer_result} <-
-           Financial.transfer(debit_account_number, credit_account_number, amount) do
+           Financial.transfer(source_account_number, target_account_number, amount) do
       render(conn, "transfer.json", transfer_result)
     end
   end

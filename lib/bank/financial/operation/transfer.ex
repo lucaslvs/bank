@@ -7,26 +7,26 @@ defmodule Bank.Financial.Operation.Transfer do
   alias Bank.Financial.Operation.{Deposit, Withdraw}
 
   @type transfer_params() :: %{
-          debit_account: Account.t(),
-          credit_account: Account.t(),
+          source_account: Account.t(),
+          target_account: Account.t(),
           amount: Money.t()
         }
 
   @impl Bank.Financial.Operation
   @spec build(transfer_params()) :: Multi.t()
   def build(%{
-        debit_account: %Account{} = debit_account,
-        credit_account: %Account{} = credit_account,
+        source_account: %Account{} = source_account,
+        target_account: %Account{} = target_account,
         amount: %Money{} = amount
       }) do
     Multi.new()
-    |> Multi.run(:validation, &validate_transfer(&1, &2, debit_account, credit_account))
-    |> Multi.merge(&withdraw(&1, debit_account, amount))
-    |> Multi.merge(&deposit(&1, credit_account, amount))
+    |> Multi.run(:validation, &validate_transfer(&1, &2, source_account, target_account))
+    |> Multi.merge(&withdraw(&1, source_account, amount))
+    |> Multi.merge(&deposit(&1, target_account, amount))
   end
 
-  defp validate_transfer(_, _, debit_account, credit_account) do
-    changeset = Account.transfer_changeset(debit_account, credit_account)
+  defp validate_transfer(_, _, source_account, target_account) do
+    changeset = Account.transfer_changeset(source_account, target_account)
 
     if changeset.valid? do
       {:ok, changeset}
@@ -35,16 +35,16 @@ defmodule Bank.Financial.Operation.Transfer do
     end
   end
 
-  defp withdraw(_changes, debit_account, amount) do
+  defp withdraw(_changes, source_account, amount) do
     Map.new()
-    |> Map.put(:account, debit_account)
+    |> Map.put(:account, source_account)
     |> Map.put(:amount, amount)
     |> Withdraw.build()
   end
 
-  defp deposit(_changes, credit_account, amount) do
+  defp deposit(_changes, target_account, amount) do
     Map.new()
-    |> Map.put(:account, credit_account)
+    |> Map.put(:account, target_account)
     |> Map.put(:amount, amount)
     |> Deposit.build()
   end

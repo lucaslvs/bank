@@ -20,8 +20,19 @@ defmodule Bank.Financial.Operation.Transfer do
         amount: %Money{} = amount
       }) do
     Multi.new()
+    |> Multi.run(:validation, &validate_transfer(&1, &2, debit_account, credit_account))
     |> Multi.merge(&withdraw(&1, debit_account, amount))
     |> Multi.merge(&deposit(&1, credit_account, amount))
+  end
+
+  defp validate_transfer(_, _, debit_account, credit_account) do
+    changeset = Account.transfer_changeset(debit_account, credit_account)
+
+    if changeset.valid? do
+      {:ok, changeset}
+    else
+      {:error, changeset}
+    end
   end
 
   defp withdraw(_changes, debit_account, amount) do

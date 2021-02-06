@@ -56,6 +56,17 @@ defmodule Bank.Customers.Account do
     end)
   end
 
+  @spec transfer_changeset(t(), t()) :: Ecto.Changeset.t()
+  def transfer_changeset(%__MODULE__{} = debit_account, %__MODULE__{} = credit_account) do
+    if debit_account.number == credit_account.number do
+      credit_account
+      |> change()
+      |> add_error(:number, "cannot transfer to the same account")
+    else
+      change(credit_account)
+    end
+  end
+
   @doc false
   @spec deposit_changeset(t(), Money.t()) :: Ecto.Changeset.t()
   def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do

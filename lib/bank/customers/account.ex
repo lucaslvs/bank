@@ -79,8 +79,7 @@ defmodule Bank.Customers.Account do
         add_invalid_balance_error(changeset)
 
       is_insufficient_balance_to_withdraw?(account_balance, balance) ->
-        message = "insufficient balance #{Money.to_string(balance)}"
-        add_error(changeset, :balance, message)
+        add_error(changeset, :balance, "insufficient balance #{Money.to_string(balance)}")
 
       true ->
         withdrawal_amount = get_field(changeset, :balance, @minimum_balance)

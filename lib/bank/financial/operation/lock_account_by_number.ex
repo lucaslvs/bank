@@ -20,7 +20,7 @@ defmodule Bank.Financial.Operation.LockAccountByNumber do
           {:ok, account}
 
         _ ->
-          {:error, :not_found}
+          {:error, "account with number #{number} not found"}
       end
     end)
   end

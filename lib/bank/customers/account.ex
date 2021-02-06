@@ -61,7 +61,7 @@ defmodule Bank.Customers.Account do
     if source_account.number == target_account.number do
       target_account
       |> change()
-      |> add_error(:number, "cannot transfer to the same account")
+      |> add_error(:target_account_number, "cannot transfer to the same account")
     else
       change(target_account)
     end
@@ -69,10 +69,10 @@ defmodule Bank.Customers.Account do
 
   @doc false
   @spec deposit_changeset(t(), Money.t()) :: Ecto.Changeset.t()
-  def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
-    changeset = change(account, balance: balance)
+  def deposit_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = amount) do
+    changeset = change(account, balance: amount)
 
-    if is_invalid_balance?(balance) do
+    if is_invalid_balance?(amount) do
       add_invalid_balance_error(changeset)
     else
       deposit_amount = get_field(changeset, :balance, @minimum_balance)
@@ -82,15 +82,15 @@ defmodule Bank.Customers.Account do
 
   @doc false
   @spec withdraw_changeset(t(), Money.t()) :: Ecto.Changeset.t()
-  def withdraw_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = balance) do
-    changeset = change(account, balance: balance)
+  def withdraw_changeset(%__MODULE__{balance: account_balance} = account, %Money{} = amount) do
+    changeset = change(account, balance: amount)
 
     cond do
-      is_invalid_balance?(balance) ->
+      is_invalid_balance?(amount) ->
         add_invalid_balance_error(changeset)
 
-      is_insufficient_balance_to_withdraw?(account_balance, balance) ->
-        add_error(changeset, :balance, "insufficient balance #{Money.to_string(balance)}")
+      is_insufficient_balance_to_withdraw?(account_balance, amount) ->
+        add_error(changeset, :balance, "insufficient balance")
 
       true ->
         withdrawal_amount = get_field(changeset, :balance, @minimum_balance)
@@ -107,6 +107,6 @@ defmodule Bank.Customers.Account do
   end
 
   defp add_invalid_balance_error(changeset) do
-    add_error(changeset, :balance, "must be greater than #{@minimum_balance}")
+    add_error(changeset, :amount, "must be greater than #{@minimum_balance}")
   end
 end

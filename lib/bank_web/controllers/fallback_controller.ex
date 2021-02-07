@@ -21,6 +21,13 @@ defmodule BankWeb.FallbackController do
     |> render("error.json", operation: operation, message: message)
   end
 
+  def call(conn, {:error, message}) when is_binary(message) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(BankWeb.ErrorView)
+    |> render("error.json", message: message)
+  end
+
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)

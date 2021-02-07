@@ -8,7 +8,8 @@ defmodule BankWeb.V1.TransactionController do
   action_fallback BankWeb.FallbackController
 
   def index(conn, params) do
-    transactions_page = Financial.filter_transactions(params)
-    render(conn, "index.json", transactions_page: transactions_page)
+    with {:ok, transactions_page} <- Financial.filter_transactions(params) do
+      render(conn, "index.json", transactions_page: transactions_page)
+    end
   end
 end

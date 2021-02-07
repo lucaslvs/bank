@@ -21,7 +21,7 @@ defmodule Bank.Financial.Transaction.QueryBuilder do
   defp filter_where(params) do
     Enum.reduce(params, dynamic(true), fn
       {"inserted_at", inserted_at}, dynamic ->
-        dynamic([t], ^dynamic and t.inserted_at == ^inserted_at)
+        dynamic([t], ^dynamic and fragment("?::date", t.inserted_at) <= ^inserted_at)
 
       {_, _}, dynamic ->
         dynamic

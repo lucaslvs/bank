@@ -5,7 +5,7 @@ defmodule BankWeb.V1.TransactionView do
 
   def render("index.json", %{transactions_page: transactions_page}) do
     %{
-      transactions: render_many(transactions_page.entries, __MODULE__, "account.json"),
+      transactions: render_many(transactions_page.entries, __MODULE__, "transaction.json"),
       page_number: transactions_page.page_number,
       page_size: transactions_page.page_size,
       total_amount: transactions_page.total_amount,

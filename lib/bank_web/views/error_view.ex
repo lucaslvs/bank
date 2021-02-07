@@ -16,6 +16,10 @@ defmodule BankWeb.ErrorView do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end
 
+  def render("error.json", %{message: message}) do
+    %{error: %{message: message}}
+  end
+
   def render("error.json", %{operation: operation, message: message}) do
     %{error: %{"#{operation}": message}}
   end

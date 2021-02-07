@@ -68,13 +68,34 @@ defmodule Bank.Financial do
     |> LockAccountByNumber.build()
   end
 
-  @spec filter_transactions(map()) :: map()
+  @spec filter_transactions(map()) :: {:error, any()} | {:ok, map()}
   def filter_transactions(params \\ %{}) when is_map(params) do
-    params
-    |> QueryBuilder.filter()
-    |> Repo.paginate(params)
-    |> calculate_and_put_total_amount()
+    transactions_page =
+      params
+      |> parse_inserted_at()
+      |> QueryBuilder.filter()
+      |> Repo.paginate(params)
+      |> calculate_and_put_total_amount()
+
+    {:ok, transactions_page}
+  rescue
+    MatchError ->
+      {:error, "invalid inserted_at format"}
+
+    FunctionClauseError ->
+      {:error, "invalid inserted_at format"}
+
+    _ ->
+      {:error, "invalid parameters"}
   end
+
+  defp parse_inserted_at(%{"inserted_at" => inserted_at} = params) do
+    {:ok, erl_inserted_at} = Calendar.ISO.parse_date(inserted_at)
+
+    Map.put(params, "inserted_at", Date.from_erl!(erl_inserted_at))
+  end
+
+  defp parse_inserted_at(params), do: params
 
   defp calculate_and_put_total_amount(%Scrivener.Page{entries: transactions} = transactions_page) do
     total_amount =

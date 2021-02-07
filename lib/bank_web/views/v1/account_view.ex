@@ -22,8 +22,8 @@ defmodule BankWeb.V1.AccountView do
       number: account.number,
       balance: Money.to_string(account.balance),
       user_id: account.user_id,
-      inserted_at: account.inserted_at,
-      updated_at: account.updated_at
+      inserted_at: NaiveDateTime.to_string(account.inserted_at),
+      updated_at: NaiveDateTime.to_string(account.updated_at)
     }
   end
 

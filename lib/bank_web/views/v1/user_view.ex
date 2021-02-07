@@ -8,8 +8,8 @@ defmodule BankWeb.V1.UserView do
       id: user.id,
       name: user.name,
       email: user.email,
-      inserted_at: user.inserted_at,
-      updated_at: user.updated_at
+      inserted_at: NaiveDateTime.to_string(user.inserted_at),
+      updated_at: NaiveDateTime.to_string(user.updated_at)
     }
   end
 end

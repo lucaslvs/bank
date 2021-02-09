@@ -7,12 +7,14 @@ defmodule Bank.Financial.Transaction do
 
   alias Bank.Customers.Account
 
-  @required_fields [:amount, :account_id]
+  @required_fields [:amount, :type, :account_id]
+  @types [:withdraw, :deposit, :transfer_deposit, :transfer_withdrawal]
 
   @type t() :: %__MODULE__{
           id: integer(),
           account: Account.t() | %Ecto.Association.NotLoaded{},
           account_id: integer(),
+          type: Ecto.Enum.type(),
           amount: Money.Ecto.Amount.Type.type(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
@@ -20,6 +22,7 @@ defmodule Bank.Financial.Transaction do
 
   schema "transactions" do
     field :amount, Money.Ecto.Amount.Type, null: false
+    field :type, Ecto.Enum, values: @types, null: false
     belongs_to :account, Account
 
     timestamps()

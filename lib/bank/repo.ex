@@ -3,7 +3,7 @@ defmodule Bank.Repo do
     otp_app: :bank,
     adapter: Ecto.Adapters.Postgres
 
-  use Scrivener, page_size: 100
+  use Scrivener, page_size: 20
 
   @impl Ecto.Repo
   def init(_type, config) do

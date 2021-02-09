@@ -39,6 +39,7 @@ defmodule Bank.Financial.Operation.Transfer do
     Map.new()
     |> Map.put(:account, source_account)
     |> Map.put(:amount, amount)
+    |> Map.put(:from_transfer?, true)
     |> Withdraw.build()
   end
 
@@ -46,6 +47,7 @@ defmodule Bank.Financial.Operation.Transfer do
     Map.new()
     |> Map.put(:account, target_account)
     |> Map.put(:amount, amount)
+    |> Map.put(:from_transfer?, true)
     |> Deposit.build()
   end
 end

@@ -74,7 +74,7 @@ defmodule Bank.Financial do
     with params when is_map(params) <- parse_inserted_filters(params),
          query <- QueryBuilder.filter(params),
          total_amount <- Repo.aggregate(query, :sum, :amount),
-         transactions_page <- Repo.paginate(query) do
+         transactions_page <- Repo.paginate(query, params) do
       total_amount =
         if is_nil(total_amount) do
           Money.to_string(~M[0])

@@ -68,10 +68,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       assert account_received["userId"] == account.user_id
     end
 
-    test "Renders :unauthorized status when the JWT token isn't in headers", %{
-      conn: conn,
-      account: account
-    } do
+    test "Renders :unauthorized status when the JWT token isn't in headers", %{conn: conn} do
       conn =
         conn
         |> delete_req_header("authorization")

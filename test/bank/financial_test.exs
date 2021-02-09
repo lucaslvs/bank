@@ -4,7 +4,6 @@ defmodule Bank.FinancialTest do
   import Bank.Factory
 
   alias Bank.Financial
-  alias Bank.Financial.Transaction
 
   describe "filter_transactions/0" do
     setup [:create_user, :create_account]
@@ -67,8 +66,12 @@ defmodule Bank.FinancialTest do
       assert page.total_pages == 2
     end
 
-    test "Returns a page of transactions by the given inserted_from filter value", %{account: account} do
-      expected_transactions = insert_list(2, :transaction, account: account, inserted_at: ~N[2021-03-05 00:00:00])
+    test "Returns a page of transactions by the given inserted_from filter value", %{
+      account: account
+    } do
+      expected_transactions =
+        insert_list(2, :transaction, account: account, inserted_at: ~N[2021-03-05 00:00:00])
+
       insert_list(2, :transaction, account: account, inserted_at: ~N[2000-01-01 00:00:00])
 
       assert {:ok, page} = Financial.filter_transactions(Map.new(inserted_from: "2021-03-05"))
@@ -81,8 +84,12 @@ defmodule Bank.FinancialTest do
       assert page.total_pages == 1
     end
 
-    test "Returns a page of transactions by the given inserted_until filter value", %{account: account} do
-      expected_transactions = insert_list(2, :transaction, account: account, inserted_at: ~N[2000-01-01 00:00:00])
+    test "Returns a page of transactions by the given inserted_until filter value", %{
+      account: account
+    } do
+      expected_transactions =
+        insert_list(2, :transaction, account: account, inserted_at: ~N[2000-01-01 00:00:00])
+
       insert_list(2, :transaction, account: account, inserted_at: ~N[2021-03-05 00:00:00])
 
       assert {:ok, page} = Financial.filter_transactions(Map.new(inserted_until: "2000-01-01"))

@@ -34,6 +34,7 @@ defmodule Bank.Financial.Transaction do
     transaction
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:type, @types)
     |> assoc_constraint(:account)
   end
 end

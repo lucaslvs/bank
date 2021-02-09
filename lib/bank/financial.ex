@@ -4,6 +4,7 @@ defmodule Bank.Financial do
   """
 
   import Ecto.Query, warn: false
+  import Money.Sigils
 
   alias Bank.Financial.Operation.{Deposit, LockAccountByNumber, Transfer, Withdraw}
   alias Bank.Financial.Transaction
@@ -68,44 +69,65 @@ defmodule Bank.Financial do
     |> LockAccountByNumber.build()
   end
 
-  @spec filter_transactions(map()) :: {:error, any()} | {:ok, map()}
+  @spec filter_transactions(map()) :: {:ok, map()} | {:error, binary()}
   def filter_transactions(params \\ %{}) when is_map(params) do
-    transactions_page =
-      params
-      |> parse_inserted_at()
-      |> QueryBuilder.filter()
-      |> Repo.paginate(params)
-      |> calculate_and_put_total_amount()
+    with params when is_map(params) <- parse_inserted_filters(params),
+         query <- QueryBuilder.filter(params),
+         total_amount <- Repo.aggregate(query, :sum, :amount),
+         transactions_page <- Repo.paginate(query) do
+      total_amount =
+        if is_nil(total_amount) do
+          Money.to_string(~M[0])
+        else
+          Money.to_string(total_amount)
+        end
 
-    {:ok, transactions_page}
+      transactions_page =
+        transactions_page
+        |> calculate_page_total_amount()
+        |> Map.put(:total_amount, total_amount)
+
+      {:ok, transactions_page}
+    end
   rescue
     MatchError ->
-      {:error, "invalid inserted_at format"}
+      {:error, "invalid date format"}
 
-    FunctionClauseError ->
-      {:error, "invalid inserted_at format"}
-
-    _ ->
+    ArgumentError ->
       {:error, "invalid parameters"}
   end
 
-  defp parse_inserted_at(%{"inserted_at" => inserted_at} = params) do
-    {:ok, erl_inserted_at} = Calendar.ISO.parse_date(inserted_at)
-
-    Map.put(params, "inserted_at", Date.from_erl!(erl_inserted_at))
+  defp parse_inserted_filters(params)
+       when is_map_key(params, "inserted_from") and is_map_key(params, "inserted_until") do
+    params
+    |> Map.update!("inserted_from", &parse_date/1)
+    |> Map.update!("inserted_until", &parse_date/1)
   end
 
-  defp parse_inserted_at(params), do: params
+  defp parse_inserted_filters(params) when is_map_key(params, "inserted_from") do
+    Map.update!(params, "inserted_from", &parse_date/1)
+  end
 
-  defp calculate_and_put_total_amount(%Scrivener.Page{entries: transactions} = transactions_page) do
-    total_amount =
+  defp parse_inserted_filters(params) when is_map_key(params, "inserted_until") do
+    Map.update!(params, "inserted_until", &parse_date/1)
+  end
+
+  defp parse_inserted_filters(params), do: params
+
+  defp parse_date(date_string) do
+    {:ok, date_erl} = Calendar.ISO.parse_date(date_string)
+    Date.from_erl!(date_erl)
+  end
+
+  defp calculate_page_total_amount(%Scrivener.Page{entries: transactions} = transactions_page) do
+    page_total_amount =
       transactions
       |> calculate_total_transaction_amount()
       |> Money.to_string()
 
     transactions_page
     |> Map.from_struct()
-    |> Map.put(:total_amount, total_amount)
+    |> Map.put(:page_total_amount, page_total_amount)
   end
 
   defp calculate_total_transaction_amount(transactions) do

@@ -23,7 +23,13 @@ defmodule Bank.Financial.Transaction.QueryBuilder do
       {"inserted_from", inserted_at}, dynamic ->
         dynamic([t], ^dynamic and fragment("?::date", t.inserted_at) >= ^inserted_at)
 
+      {:inserted_from, inserted_at}, dynamic ->
+        dynamic([t], ^dynamic and fragment("?::date", t.inserted_at) >= ^inserted_at)
+
       {"inserted_until", inserted_at}, dynamic ->
+        dynamic([t], ^dynamic and fragment("?::date", t.inserted_at) <= ^inserted_at)
+
+      {:inserted_until, inserted_at}, dynamic ->
         dynamic([t], ^dynamic and fragment("?::date", t.inserted_at) <= ^inserted_at)
 
       {_, _}, dynamic ->

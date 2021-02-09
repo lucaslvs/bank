@@ -67,9 +67,19 @@ defmodule Bank.FinancialTest do
       assert page.total_pages == 2
     end
 
-    # test "Returns a page of transactions by the given insert_from filter value", %{account: account} do
-    #   [_transaction | transaction] = insert_list(2, :transaction, account: account)
-    # end
+    test "Returns a page of transactions by the given inserted_from filter value", %{account: account} do
+      expected_transactions = insert_list(2, :transaction, account: account, inserted_at: ~N[2021-03-05 00:00:00])
+      insert_list(2, :transaction, account: account, inserted_at: ~N[2000-01-01 00:00:00])
+
+      assert {:ok, page} = Financial.filter_transactions(Map.new(inserted_from: "2021-03-05"))
+      assert page.entries == expected_transactions
+      assert page.page_number == 1
+      assert page.page_size == 20
+      assert page.page_total_amount == "R$ 200.00"
+      assert page.total_amount == "R$ 200.00"
+      assert page.total_entries == 2
+      assert page.total_pages == 1
+    end
   end
 
   defp create_user(_context), do: {:ok, user: insert(:user)}

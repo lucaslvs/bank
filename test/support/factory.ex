@@ -28,14 +28,23 @@ defmodule Bank.Factory do
     %Transaction{
       amount: ~M[100_00],
       account_id: get_account_id(params),
-      type: get_type(params)
+      type: get_type(params),
+      inserted_at: get_inserted_at(params)
     }
   end
 
-  def get_type(params) do
+  defp get_type(params) do
     types = [:withdraw, :deposit, :transfer_deposit, :transfer_withdrawal]
 
     Map.get(params, :type, sequence(:type, types))
+  end
+
+  defp get_inserted_at(%{inserted_at: %NaiveDateTime{} = inserted_at}) do
+    NaiveDateTime.truncate(inserted_at, :second)
+  end
+
+  defp get_inserted_at(_params) do
+    NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
   end
 
   defp get_account_id(params)

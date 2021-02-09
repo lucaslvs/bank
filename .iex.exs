@@ -1,4 +1,5 @@
 import Ecto.Query, warn: false
+import Money.Sigils
 
 alias Bank.{Customers, Financial}
 alias Bank.Customers.{Account, User}

@@ -104,12 +104,27 @@ defmodule Bank.Financial do
     |> Map.update!("inserted_until", &parse_date/1)
   end
 
+  defp parse_inserted_filters(params)
+       when is_map_key(params, :inserted_from) and is_map_key(params, :inserted_until) do
+    params
+    |> Map.update!(:inserted_from, &parse_date/1)
+    |> Map.update!(:inserted_until, &parse_date/1)
+  end
+
   defp parse_inserted_filters(params) when is_map_key(params, "inserted_from") do
     Map.update!(params, "inserted_from", &parse_date/1)
   end
 
+  defp parse_inserted_filters(params) when is_map_key(params, :inserted_from) do
+    Map.update!(params, :inserted_from, &parse_date/1)
+  end
+
   defp parse_inserted_filters(params) when is_map_key(params, "inserted_until") do
     Map.update!(params, "inserted_until", &parse_date/1)
+  end
+
+  defp parse_inserted_filters(params) when is_map_key(params, :inserted_until) do
+    Map.update!(params, :inserted_until, &parse_date/1)
   end
 
   defp parse_inserted_filters(params), do: params
@@ -131,6 +146,6 @@ defmodule Bank.Financial do
   end
 
   defp calculate_total_transaction_amount(transactions) do
-    Enum.reduce(transactions, Money.new(0), &Money.add(&2, Money.abs(&1.amount)))
+    Enum.reduce(transactions, Money.new(0), &Money.add(&2, &1.amount))
   end
 end

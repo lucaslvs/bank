@@ -8,6 +8,40 @@ defmodule Bank.FinancialTest do
   alias Bank.Financial
   alias Bank.Notifications
 
+  describe "transfer/3" do
+    setup [:create_user, :create_account, :create_target_account]
+
+    test "Returns an target account with balance added by the given amount", %{account: account, target_account: target_account} do
+      assert {:ok, %{deposit_account: deposit_account}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert Money.equals?(deposit_account.balance, Money.add(target_account.balance, ~M[100_00]))
+    end
+
+    test "Returns an created target transaction with amount value by the given amount", %{account: account, target_account: target_account} do
+      assert {:ok, %{deposit_transaction: deposit_transaction}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert Money.equals?(deposit_transaction.amount, ~M[100_00])
+    end
+
+    test "Returns an created transaction with type :transfer_deposit", %{account: account, target_account: target_account} do
+      assert {:ok, %{deposit_transaction: deposit_transaction}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert deposit_transaction.type == :transfer_deposit
+    end
+
+    test "Returns an account with balance subtracted by the given amount", %{account: account, target_account: target_account} do
+      assert {:ok, %{withdrawal_account: withdrawal_account}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert Money.equals?(withdrawal_account.balance, Money.subtract(target_account.balance, ~M[100_00]))
+    end
+
+    test "Returns an created source transaction with amount value by the given amount", %{account: account, target_account: target_account} do
+      assert {:ok, %{withdrawal_transaction: withdrawal_transaction}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert Money.equals?(withdrawal_transaction.amount, ~M[100_00])
+    end
+
+    test "Returns an created transaction with type :transfer_withdrawal", %{account: account, target_account: target_account} do
+      assert {:ok, %{withdrawal_transaction: withdrawal_transaction}} = Financial.transfer(account.number, target_account.number, 100_00)
+      assert withdrawal_transaction.type == :transfer_withdrawal
+    end
+  end
+
   describe "deposit/2" do
     setup [:create_user, :create_account]
 
@@ -229,4 +263,10 @@ defmodule Bank.FinancialTest do
   defp create_user(_context), do: {:ok, user: insert(:user)}
 
   defp create_account(%{user: user}), do: {:ok, account: insert(:account, user: user)}
+
+  defp create_target_account(_context) do
+    user = insert(:user, email: "target@email.com")
+
+    {:ok, target_account: insert(:account, number: "654321", user: user)}
+  end
 end

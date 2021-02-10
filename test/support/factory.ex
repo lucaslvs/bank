@@ -18,7 +18,7 @@ defmodule Bank.Factory do
 
   def account_factory(params) do
     %Account{
-      number: "123456",
+      number: Map.get(params, :number, "123456"),
       balance: Money.new(100_000),
       user_id: get_user_id(params)
     }

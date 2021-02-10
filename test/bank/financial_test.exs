@@ -122,8 +122,7 @@ defmodule Bank.FinancialTest do
       assert page.total_pages == 1
     end
 
-    test "Returns a invalid date format error when the given filters has a invalid date values",
-         %{account: account} do
+    test "Returns a invalid date format error when the given filters has a invalid date values" do
       assert {:error, "invalid date format"} =
                Financial.filter_transactions(
                  Map.new(inserted_from: "9999-99-99", inserted_until: "0000-00-00")

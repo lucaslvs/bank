@@ -3,6 +3,8 @@ defmodule BankWeb.Router do
 
   use BankWeb, :router
 
+  import Plug.BasicAuth
+
   pipeline :api do
     plug CORSPlug, origin: ["*"]
     plug :accepts, ["json"]
@@ -11,6 +13,10 @@ defmodule BankWeb.Router do
 
   pipeline :auth do
     plug BankWeb.Authentication.Pipeline
+  end
+
+  pipeline :backoffice_auth do
+    plug :basic_auth, Application.compile_env(:bank, :basic_auth)
   end
 
   scope "/api", BankWeb, as: :api do
@@ -34,7 +40,6 @@ defmodule BankWeb.Router do
       options "/accounts/:id", AccountController, :options
       options "/accounts/withdraw", AccountController, :options
       options "/accounts/deposit", AccountController, :options
-      options "/transactions", TransactionController, :options
 
       # coveralls-ignore-stop
 
@@ -43,6 +48,13 @@ defmodule BankWeb.Router do
         post "/deposit", AccountController, :deposit
         post "/transfer", AccountController, :transfer
       end
+    end
+
+    scope "/v1", V1, as: :v1 do
+      pipe_through [:api, :backoffice_auth]
+      # coveralls-ignore-start
+      options "/transactions", TransactionController, :options
+      # coveralls-ignore-stop
 
       resources "/transactions", TransactionController, only: [:index]
     end

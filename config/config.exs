@@ -22,6 +22,10 @@ config :bank, BankWeb.Authentication.Guardian,
   issuer: "bank",
   secret_key: "HhIdoq+T09DC0aXK1mWTgSDT6To/r7u8U74NraaI1egjxMUwM6HIXnen4odlAyI3"
 
+config :bank, :basic_auth,
+  username: System.get_env("BACKOFFICE_USER", "bank"),
+  password: System.get_env("BACKOFFICE_PASSWORD", "password")
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

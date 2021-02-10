@@ -93,7 +93,7 @@ defmodule Bank.Financial do
     MatchError ->
       {:error, "invalid date format"}
 
-    ArgumentError ->
+    _ ->
       {:error, "invalid parameters"}
   end
 

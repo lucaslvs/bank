@@ -47,7 +47,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -77,7 +80,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -107,7 +113,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -140,7 +149,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -173,7 +185,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -184,10 +199,11 @@ defmodule BankWeb.V1.TransactionControllerTest do
       end
     end
 
-    test "Returns a page of transactions by the given inserted_from and inserted_until filters value", %{
-      account: account,
-      conn: conn
-    } do
+    test "Returns a page of transactions by the given inserted_from and inserted_until filters value",
+         %{
+           account: account,
+           conn: conn
+         } do
       insert(:transaction, account: account, inserted_at: ~N[2000-01-01 00:00:00])
       insert(:transaction, account: account, inserted_at: ~N[2021-03-05 00:00:00])
 
@@ -207,7 +223,10 @@ defmodule BankWeb.V1.TransactionControllerTest do
 
       assert received_transaction["id"] == transaction.id
       assert received_transaction["accountId"] == transaction.account_id
-      assert received_transaction["insertedAt"] == NaiveDateTime.to_string(transaction.inserted_at)
+
+      assert received_transaction["insertedAt"] ==
+               NaiveDateTime.to_string(transaction.inserted_at)
+
       assert received_transaction["updatedAt"] == NaiveDateTime.to_string(transaction.updated_at)
       assert received_transaction["type"] == to_string(transaction.type)
 
@@ -218,7 +237,8 @@ defmodule BankWeb.V1.TransactionControllerTest do
       end
     end
 
-    test "Returns a invalid date format error when the given filters has a invalid date values", %{conn: conn} do
+    test "Returns a invalid date format error when the given filters has a invalid date values",
+         %{conn: conn} do
       path = Routes.api_v1_transaction_path(conn, :index)
 
       conn = get(conn, path, inserted_from: "9999-99-99", inserted_until: "0000-00-00")

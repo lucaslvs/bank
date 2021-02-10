@@ -8,6 +8,42 @@ defmodule Bank.FinancialTest do
   alias Bank.Financial
   alias Bank.Notifications
 
+  describe "deposit/2" do
+    setup [:create_user, :create_account]
+
+    test "Returns an account with balance added by the given amount", %{account: account} do
+      assert {:ok, %{deposit_account: deposit_account}} = Financial.deposit(account.number, 100_00)
+      assert Money.equals?(deposit_account.balance, Money.add(account.balance, ~M[100_00]))
+    end
+
+    test "Returns an created transaction with amount value by the given amount", %{account: account} do
+      assert {:ok, %{deposit_transaction: deposit_transaction}} = Financial.deposit(account.number, 100_00)
+      assert Money.equals?(deposit_transaction.amount, ~M[100_00])
+    end
+
+    test "Returns an created transaction with type :deposit", %{account: account} do
+      assert {:ok, %{deposit_transaction: deposit_transaction}} = Financial.deposit(account.number, 100_00)
+      assert deposit_transaction.type == :deposit
+    end
+
+    test "Returns a account error when not exist a account with number equals with the given account's number" do
+      assert {:error, :account, message, _} = Financial.deposit("000000", 100_00)
+      assert message == "account with number 000000 not found"
+    end
+
+    test "Returns a invalid balance error when the given amount is negative", %{account: account} do
+      assert {:error, :deposit_account, changeset, _} = Financial.deposit(account.number, -100_00)
+      assert %Ecto.Changeset{valid?: false, errors: errors} = changeset
+      assert [balance: {"must be greater than R$ 0.00", []}] = errors
+    end
+
+    test "Returns a invalid balance error when the given amount is zero", %{account: account} do
+      assert {:error, :deposit_account, changeset, _} = Financial.deposit(account.number, 0)
+      assert %Ecto.Changeset{valid?: false, errors: errors} = changeset
+      assert [balance: {"must be greater than R$ 0.00", []}] = errors
+    end
+  end
+
   describe "withdraw/2" do
     setup [:create_user, :create_account]
 

@@ -107,6 +107,6 @@ defmodule Bank.Customers.Account do
   end
 
   defp add_invalid_balance_error(changeset) do
-    add_error(changeset, :amount, "must be greater than #{@minimum_balance}")
+    add_error(changeset, :balance, "must be greater than #{@minimum_balance}")
   end
 end

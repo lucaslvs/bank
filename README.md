@@ -29,7 +29,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
   > - Install the dependencies.
   > - Create the database.
   > - Run the migrations on the database.
-  > - Run the `priv/repo/seeds.exs` script file.
+  > - Run the [priv/repo/seeds.exs](https://github.com/lucaslvs/bank/blob/master/priv/repo/seeds.exs) script file.
 
 ## Development
 

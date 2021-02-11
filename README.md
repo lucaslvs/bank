@@ -18,7 +18,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
     git clone git@github.com:lucaslvs/bank.git && cd bank
     ```
 
-- If you want to run run with DockerCompose, run the follwing commands:
+- Or you can run with DockerCompose, like:
 
     ```sh
     docker-compose up -d --build app && docker-compose exec app bash

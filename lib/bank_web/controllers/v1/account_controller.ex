@@ -27,14 +27,18 @@ defmodule BankWeb.V1.AccountController do
   def withdraw(conn, %{"amount" => amount}) do
     with {:ok, %Account{number: number}} <- Authentication.current_token_user_account(conn),
          {:ok, withdrawal_result} <- Financial.withdraw(number, amount) do
-      render(conn, "withdraw.json", withdrawal_result)
+      conn
+      |> put_status(:created)
+      |> render("withdraw.json", withdrawal_result)
     end
   end
 
   def deposit(conn, %{"amount" => amount}) do
     with {:ok, %Account{number: number}} <- Authentication.current_token_user_account(conn),
          {:ok, deposit_result} <- Financial.deposit(number, amount) do
-      render(conn, "deposit.json", deposit_result)
+      conn
+      |> put_status(:created)
+      |> render("deposit.json", deposit_result)
     end
   end
 
@@ -43,7 +47,9 @@ defmodule BankWeb.V1.AccountController do
            Authentication.current_token_user_account(conn),
          {:ok, transfer_result} <-
            Financial.transfer(source_account_number, target_account_number, amount) do
-      render(conn, "transfer.json", transfer_result)
+      conn
+      |> put_status(:created)
+      |> render("transfer.json", transfer_result)
     end
   end
 end

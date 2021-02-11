@@ -260,7 +260,7 @@ When a transfer validation like the received amount value that is negative or ze
 
 ## POST /api/v1/accounts/deposit
 
-🔐 **Authenticated**
+**Authenticated**
 
 Deposit the given amount in authenticated user account.
 

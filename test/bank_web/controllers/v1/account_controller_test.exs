@@ -90,7 +90,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -119,7 +119,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -137,7 +137,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -157,7 +157,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -181,7 +181,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -200,7 +200,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       conn =
         post(conn, "/api/v1/accounts/transfer",
           target_account_number: target_account.number,
-          amount: 100_00
+          amount: 10_000
         )
 
       assert transfer_result = json_response(conn, 201)
@@ -218,7 +218,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       account: account,
       conn: conn
     } do
-      conn = post(conn, "/api/v1/accounts/deposit", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/deposit", amount: 10_000)
 
       assert deposit_result = json_response(conn, 201)
 
@@ -237,7 +237,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       account: account,
       conn: conn
     } do
-      conn = post(conn, "/api/v1/accounts/deposit", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/deposit", amount: 10_000)
 
       assert deposit_result = json_response(conn, 201)
 
@@ -248,7 +248,7 @@ defmodule BankWeb.V1.AccountControllerTest do
     end
 
     test "Returns an created transaction with type :deposit", %{account: account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/deposit", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/deposit", amount: 10_000)
 
       assert deposit_result = json_response(conn, 201)
 
@@ -260,7 +260,7 @@ defmodule BankWeb.V1.AccountControllerTest do
     end
 
     test "Returns a invalid balance error when the given amount is negative", %{conn: conn} do
-      conn = post(conn, "/api/v1/accounts/deposit", amount: -100_00)
+      conn = post(conn, "/api/v1/accounts/deposit", amount: -10_000)
 
       assert %{
                "errors" => %{"depositAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}
@@ -281,7 +281,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       account: account,
       conn: conn
     } do
-      conn = post(conn, "/api/v1/accounts/withdraw", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/withdraw", amount: 10_000)
 
       assert withdrawal_result = json_response(conn, 201)
 
@@ -300,7 +300,7 @@ defmodule BankWeb.V1.AccountControllerTest do
       account: account,
       conn: conn
     } do
-      conn = post(conn, "/api/v1/accounts/withdraw", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/withdraw", amount: 10_000)
 
       assert withdrawal_result = json_response(conn, 201)
 
@@ -311,7 +311,7 @@ defmodule BankWeb.V1.AccountControllerTest do
     end
 
     test "Returns an created transaction with type :withdraw", %{account: account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/withdraw", amount: 100_00)
+      conn = post(conn, "/api/v1/accounts/withdraw", amount: 10_000)
 
       assert withdrawal_result = json_response(conn, 201)
 
@@ -323,7 +323,7 @@ defmodule BankWeb.V1.AccountControllerTest do
     end
 
     test "Returns a invalid balance error when the given amount is negative", %{conn: conn} do
-      conn = post(conn, "/api/v1/accounts/withdraw", amount: -100_00)
+      conn = post(conn, "/api/v1/accounts/withdraw", amount: -10_000)
 
       assert %{
                "errors" => %{

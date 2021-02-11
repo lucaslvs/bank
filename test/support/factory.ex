@@ -26,7 +26,7 @@ defmodule Bank.Factory do
 
   def transaction_factory(params) do
     %Transaction{
-      amount: ~M[100_00],
+      amount: ~M[10_000],
       account_id: get_account_id(params),
       type: get_type(params),
       inserted_at: get_inserted_at(params)

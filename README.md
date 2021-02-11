@@ -26,10 +26,10 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
 
   > This following mix task will:
   >
-  > 1. Install the dependencies.
-  > 2. Create the database.
-  > 3. Run the migrations on the database.
-  > 4. Run the `priv/repo/seeds.exs` script file.
+  > - Install the dependencies.
+  > - Create the database.
+  > - Run the migrations on the database.
+  > - Run the `priv/repo/seeds.exs` script file.
 
 ## Development
 

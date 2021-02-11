@@ -2,7 +2,6 @@ defmodule BankWeb.V1.AccountControllerTest do
   use BankWeb.ConnCase
 
   import Bank.Factory
-  import Money.Sigils
 
   alias BankWeb.Authentication.Guardian
 
@@ -84,45 +83,141 @@ defmodule BankWeb.V1.AccountControllerTest do
   end
 
   describe "transfer/2" do
-    test "Returns an target account with balance added by the given amount", %{target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an target account with balance added by the given amount", %{
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      transfer_target_account = transfer_result["target"]["account"]
+      target_account = Bank.Repo.reload!(target_account)
+
+      assert transfer_target_account["balance"] == "R$ 1,100.00"
+      assert transfer_target_account["id"] == target_account.id
+
+      assert transfer_target_account["insertedAt"] ==
+               NaiveDateTime.to_string(target_account.inserted_at)
+
+      assert transfer_target_account["number"] == target_account.number
+
+      assert transfer_target_account["updatedAt"] ==
+               NaiveDateTime.to_string(target_account.updated_at)
+
+      assert transfer_target_account["userId"] == target_account.user_id
     end
 
-    test "Returns an created target transaction with amount value by the given amount", %{target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an created target transaction with amount value by the given amount", %{
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      target_transaction = transfer_result["target"]["transaction"]
+
+      assert target_transaction["amount"] == "R$ 100.00"
+      assert target_transaction["accountId"] == target_account.id
     end
 
-    test "Returns an created transaction with type :transfer_deposit", %{target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an created transaction with type :transfer_deposit", %{
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      target_transaction = transfer_result["target"]["transaction"]
+
+      assert target_transaction["amount"] == "R$ 100.00"
+      assert target_transaction["accountId"] == target_account.id
+      assert target_transaction["type"] == "transfer_deposit"
     end
 
-    test "Returns an account with balance subtracted by the given amount", %{target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an account with balance subtracted by the given amount", %{
+      account: account,
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      source_account = transfer_result["source"]["account"]
+      account = Bank.Repo.reload!(account)
+
+      assert source_account["balance"] == "R$ 900.00"
+      assert source_account["id"] == account.id
+      assert source_account["insertedAt"] == NaiveDateTime.to_string(account.inserted_at)
+      assert source_account["number"] == account.number
+      assert source_account["updatedAt"] == NaiveDateTime.to_string(account.updated_at)
+      assert source_account["userId"] == account.user_id
     end
 
-    test "Returns an created source transaction with amount value by the given amount", %{account: account, target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an created source transaction with amount value by the given amount", %{
+      account: account,
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      source_transaction = transfer_result["source"]["transaction"]
+
+      assert source_transaction["amount"] == "R$ -100.00"
+      assert source_transaction["accountId"] == account.id
     end
 
-    test "Returns an created transaction with type :transfer_withdrawal", %{account: account, target_account: target_account, conn: conn} do
-      conn = post(conn, "/api/v1/accounts/transfer", target_account_number: target_account.number, amount: 100_00)
+    test "Returns an created transaction with type :transfer_withdrawal", %{
+      account: account,
+      target_account: target_account,
+      conn: conn
+    } do
+      conn =
+        post(conn, "/api/v1/accounts/transfer",
+          target_account_number: target_account.number,
+          amount: 100_00
+        )
 
       assert transfer_result = json_response(conn, 201)
+
+      source_transaction = transfer_result["source"]["transaction"]
+
+      assert source_transaction["amount"] == "R$ -100.00"
+      assert source_transaction["accountId"] == account.id
+      assert source_transaction["type"] == "transfer_withdrawal"
     end
   end
 
   describe "deposit/2" do
-    test "Returns an account with balance added by the given amount", %{account: account, conn: conn} do
+    test "Returns an account with balance added by the given amount", %{
+      account: account,
+      conn: conn
+    } do
       conn = post(conn, "/api/v1/accounts/deposit", amount: 100_00)
 
       assert deposit_result = json_response(conn, 201)
@@ -138,7 +233,10 @@ defmodule BankWeb.V1.AccountControllerTest do
       assert deposit_account["userId"] == account.user_id
     end
 
-    test "Returns an created transaction with amount value by the given amount", %{account: account, conn: conn} do
+    test "Returns an created transaction with amount value by the given amount", %{
+      account: account,
+      conn: conn
+    } do
       conn = post(conn, "/api/v1/accounts/deposit", amount: 100_00)
 
       assert deposit_result = json_response(conn, 201)
@@ -161,21 +259,28 @@ defmodule BankWeb.V1.AccountControllerTest do
       assert deposit_transaction["type"] == "deposit"
     end
 
-    test "Returns a invalid balance error when the given amount is negative", %{account: account, conn: conn} do
+    test "Returns a invalid balance error when the given amount is negative", %{conn: conn} do
       conn = post(conn, "/api/v1/accounts/deposit", amount: -100_00)
 
-      assert %{"errors" => %{"depositAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}} = json_response(conn, 422)
+      assert %{
+               "errors" => %{"depositAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}
+             } = json_response(conn, 422)
     end
 
-    test "Returns a invalid balance error when the given amount is zero", %{account: account, conn: conn} do
+    test "Returns a invalid balance error when the given amount is zero", %{conn: conn} do
       conn = post(conn, "/api/v1/accounts/deposit", amount: 0)
 
-      assert %{"errors" => %{"depositAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}} = json_response(conn, 422)
+      assert %{
+               "errors" => %{"depositAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}
+             } = json_response(conn, 422)
     end
   end
 
   describe "withdraw/2" do
-    test "Returns an account with balance subtracted by the given amount", %{account: account, conn: conn} do
+    test "Returns an account with balance subtracted by the given amount", %{
+      account: account,
+      conn: conn
+    } do
       conn = post(conn, "/api/v1/accounts/withdraw", amount: 100_00)
 
       assert withdrawal_result = json_response(conn, 201)
@@ -191,7 +296,10 @@ defmodule BankWeb.V1.AccountControllerTest do
       assert withdrawal_account["userId"] == account.user_id
     end
 
-    test "Returns an created transaction with amount value by the given amount", %{account: account, conn: conn} do
+    test "Returns an created transaction with amount value by the given amount", %{
+      account: account,
+      conn: conn
+    } do
       conn = post(conn, "/api/v1/accounts/withdraw", amount: 100_00)
 
       assert withdrawal_result = json_response(conn, 201)
@@ -214,22 +322,32 @@ defmodule BankWeb.V1.AccountControllerTest do
       assert withdrawal_transaction["type"] == "withdraw"
     end
 
-    test "Returns a invalid balance error when the given amount is negative", %{account: account, conn: conn} do
+    test "Returns a invalid balance error when the given amount is negative", %{conn: conn} do
       conn = post(conn, "/api/v1/accounts/withdraw", amount: -100_00)
 
-      assert %{"errors" => %{"withdrawalAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}} = json_response(conn, 422)
+      assert %{
+               "errors" => %{
+                 "withdrawalAccount" => %{"balance" => ["must be greater than R$ 0.00"]}
+               }
+             } = json_response(conn, 422)
     end
 
-    test "Returns a insufficient balance error when the given account has the less balance than received amount", %{account: account, conn: conn} do
+    test "Returns a insufficient balance error when the given account has the less balance than received amount",
+         %{conn: conn} do
       conn = post(conn, "/api/v1/accounts/withdraw", amount: 1_000_000)
 
-      assert %{"errors" => %{"withdrawalAccount" => %{"balance" => ["insufficient balance"]}}} = json_response(conn, 422)
+      assert %{"errors" => %{"withdrawalAccount" => %{"balance" => ["insufficient balance"]}}} =
+               json_response(conn, 422)
     end
 
-    test "Returns a invalid balance error when the given amount is zero", %{account: account, conn: conn} do
+    test "Returns a invalid balance error when the given amount is zero", %{conn: conn} do
       conn = post(conn, "/api/v1/accounts/withdraw", amount: 0)
 
-      assert %{"errors" => %{"withdrawalAccount" => %{"balance" => ["must be greater than R$ 0.00"]}}} = json_response(conn, 422)
+      assert %{
+               "errors" => %{
+                 "withdrawalAccount" => %{"balance" => ["must be greater than R$ 0.00"]}
+               }
+             } = json_response(conn, 422)
     end
   end
 end

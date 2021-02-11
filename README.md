@@ -96,7 +96,7 @@ The main workflow, will schedule 3 jobs, `test`, `lint` and `deploy`.
 
 ## API Endpoints
 
-🔐 **Authentication**
+**Authentication**
 
 Requests to authenticated endpoints are authorized through a Bearer token that should be provided in the `Authorization` HTTP header. Check the `/api/v1/tokens` endpoint to see how to generate Bearer tokens.
 
@@ -125,7 +125,7 @@ Authenticates the user using `email` and `password` credentials and generates an
 
 ## GET /api/v1/accounts
 
-🔐 **Authenticated**
+**Authenticated**
 
 Return the data of the authenticated user account such as its balance and number.
 
@@ -165,7 +165,7 @@ When there isn't a valid JWT token.
 
 ## POST /api/v1/accounts/transfer
 
-🔐 **Authenticated**
+**Authenticated**
 
 Transfer the given amount from authenticated user account to target account.
 
@@ -316,7 +316,7 @@ When a transfer validation like the received amount value that is negative or ze
 
 ## POST /api/v1/accounts/withdraw
 
-🔐 **Authenticated**
+**Authenticated**
 
 Withdraw the given amount from authenticated user account.
 
@@ -390,7 +390,7 @@ When a transfer validation like the received amount value that is negative or ze
 
 ## POST /api/v1/accounts/transactions
 
-🔐 **Authenticated**
+**Authenticated**
 
 Returns a transactions page by the given query parameters with the pageTotalAmount and `totalAmount` of the query.
 

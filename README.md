@@ -39,7 +39,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
     mix phx.server
     ```
 
-  > You can access the server routes at `http://localhost:4000`.
+  > You can access the server at `http://localhost:4000`.
 
 - To run the elixir with the project REPL:
 
@@ -53,7 +53,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
     iex -S mix phx.server
     ```
 
-  > You can access the server routes at `http://localhost:4000` too.
+  > You can access the server at `http://localhost:4000` too.
 
 - To list all available routes:
 
@@ -91,3 +91,5 @@ The main workflow, will schedule 3 jobs, `test`, `lint` and `deploy`.
 - The `test` job run the tests and report the coverage in [Coveralls](https://coveralls.io/github/lucaslvs/bank).
 - The `lint` job Run the formatter check and [Credo](https://github.com/rrrene/credo) linter.
 - The `deploy` job only runs if `test` and `lint` jobs was successfull and push the new [Release](https://hexdocs.pm/mix/Mix.Tasks.Release.html) with [Gigalixir](https://www.gigalixir.com/).
+
+> You can access the production server at `https://stone-bank.gigalixirapp.com`

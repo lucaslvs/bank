@@ -24,7 +24,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
     mix setup
     ```
 
-  > This following mix task will:
+  > This mix task will:
   >
   > - Install the dependencies.
   > - Create the database.
@@ -81,7 +81,7 @@ A basic banking API build with [Elixir](http://elixir-lang.org).
     mix coveralls.html
     ```
 
-  > This comand will generate a `excoveralls.html` file in `cover` folder.
+  > This mix task will generate a `excoveralls.html` file in `cover` folder.
 
 ## Deployng
 

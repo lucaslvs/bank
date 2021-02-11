@@ -1,0 +1,7 @@
+_build/
+deps/
+.git/
+.gitignore
+README*
+test/
+priv/static/

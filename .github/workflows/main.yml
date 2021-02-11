@@ -1,4 +1,4 @@
-name: Bank CI
+name: Bank
 
 on:
   push:

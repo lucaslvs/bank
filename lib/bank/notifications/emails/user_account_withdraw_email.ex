@@ -1,5 +1,7 @@
 defmodule Bank.Notifications.UserAccountWithdrawEmail do
-  @moduledoc false
+  @moduledoc """
+  A email of user account withdraw.
+  """
 
   use Bank.Notifications.Email, :sendgrid
 

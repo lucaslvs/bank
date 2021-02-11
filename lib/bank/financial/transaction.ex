@@ -1,5 +1,7 @@
 defmodule Bank.Financial.Transaction do
-  @moduledoc false
+  @moduledoc """
+  A `Ecto.Schema.t()` responsible for modeling all transactions in an `Bank.Customers.Account`.
+  """
 
   use Ecto.Schema
 

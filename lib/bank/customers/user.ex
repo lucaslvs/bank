@@ -1,5 +1,7 @@
 defmodule Bank.Customers.User do
-  @moduledoc false
+  @moduledoc """
+  A scheme responsible for modeling the bank customer's personal and access data.
+  """
 
   use Ecto.Schema
 

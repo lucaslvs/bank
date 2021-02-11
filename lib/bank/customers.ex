@@ -1,6 +1,7 @@
 defmodule Bank.Customers do
   @moduledoc """
-  The Customers context.
+  The Customers context is responsible for providing an API
+  that handles the business logic of accounts and users
   """
 
   import Ecto.Query, warn: false
@@ -10,35 +11,11 @@ defmodule Bank.Customers do
   alias Ecto.Multi
 
   @doc """
-  Creates a `Bank.Customers.User` and `Bank.Customers.Account` by the given `attrs`.
+  Creates a `Bank.Customers.User` and `Bank.Customers.Account`
+  by the given `user_params` and `account_params`.
 
-  ## Examples
-
-      iex> attrs = %{
-      ...>  account: %{number: "123456", balance: Money.new(0)},
-      ...>  email: "user@email.com",
-      ...>  email_confirmation: "user@email.com",
-      ...>  name: "user",
-      ...>  password: "password",
-      ...>  password_confirmation: "password"
-      ...> }
-      %{
-        account: %{balance: %Money{amount: 0, currency: :BRL}, number: "123456"},
-        email: "user@email.com",
-        email_confirmation: "user@email.com",
-        name: "user",
-        password: "password",
-        password_confirmation: "password"
-      }
-
-      iex> open_account(attrs)
-      {:ok, %User{}}
-
-      iex> open_account(%{})
-      {:error, %Ecto.Changeset{}}
-
-      iex> open_account(%{field: "bad_value"})
-      {:error, %Ecto.Changeset{}}
+  To see all the necessary parameters,
+  check `Bank.Customers.Account` and `Bank.Customers.User` schemas.
   """
   @spec open_account(map() | none(), map() | none()) :: {:ok, any()} | {:error, any()}
   def open_account(user_params \\ %{}, account_params \\ %{})
@@ -57,17 +34,9 @@ defmodule Bank.Customers do
   end
 
   @doc """
-  Gets a single user.
+  Gets a single `Bank.Customers.User` by the given `id`.
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
+  Raises `Ecto.NoResultsError` if the `Bank.Customers.User` does not exist.
 
   """
   @spec get_user!(binary() | integer()) :: User.t() | %Ecto.NoResultsError{}
@@ -78,16 +47,7 @@ defmodule Bank.Customers do
   end
 
   @doc """
-  Gets a single user.
-
-  ## Examples
-
-      iex> get_user(123)
-      {:ok, %User{}}
-
-      iex> get_user(456)
-      {:error, :not_found}
-
+  Gets a single `Bank.Customers.User` by the given `id`.
   """
   @spec get_user(binary() | integer()) :: {:ok, User.t()} | {:error, :not_found}
   def get_user(id) when is_integer(id) or is_binary(id) do
@@ -98,17 +58,9 @@ defmodule Bank.Customers do
   end
 
   @doc """
-  Gets a single user by the given `attrs`.
+  Gets a single `Bank.Customers.User` by the given `attrs`.
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user_by!(%{email: "valid@email.com"})
-      %User{}
-
-      iex> get_user_by!(%{email: "invalid@email.com"})
-      ** (Ecto.NoResultsError)
+  Raises `Ecto.NoResultsError` if the `Bank.Customers.User` does not exist.
   """
   @spec get_user_by!(map()) :: User.t() | %Ecto.NoResultsError{}
   def get_user_by!(attrs) when is_map(attrs) do
@@ -118,7 +70,7 @@ defmodule Bank.Customers do
   end
 
   @doc """
-  Gets a single user by the given `attrs`.
+  Gets a single `Bank.Customers.User` by the given `attrs`.
 
   ## Examples
 

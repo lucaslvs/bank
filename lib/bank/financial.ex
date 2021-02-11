@@ -1,6 +1,7 @@
 defmodule Bank.Financial do
   @moduledoc """
-  The Financial context.
+  The Financial context is responsible for providing an API of the
+  business logic of account's operation and your transactions.
   """
 
   import Ecto.Query, warn: false
@@ -13,6 +14,17 @@ defmodule Bank.Financial do
   alias Bank.Repo
   alias Ecto.Multi
 
+  @doc """
+  Performs a `Bank.Financial.Operation.Transfer.build/1`
+  on the provided `Bank.Customers.Account.t()` `source_account_number` and
+  `Bank.Customers.Account.t()` `target_account_number`. This operation will perform
+  a `Bank.Financial.Operation.Withdraw.build/1` operation on the `target_account_number` and then
+  perform a `Bank.Financial.Operation.Deposit.build/1` operation on the `source_account_number`,
+  these operations are done in the same database transaction to avoid inconsistent results in case
+  of a failure in one of the operations. `Bank.Financial.Operation.Transfer.build/1` operations are also
+  performed with a lock on both accounts records at the same time to prevent issues
+  while calculating the final accounts balances.
+  """
   @spec transfer(String.t(), String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def transfer(source_account_number, target_account_number, amount)
       when is_binary(source_account_number) and is_binary(target_account_number) and
@@ -26,6 +38,13 @@ defmodule Bank.Financial do
     |> Repo.transaction()
   end
 
+  @doc """
+  Performs a `Bank.Financial.Operation.Deposit.build/1` operation on the provided
+  `Bank.Customers.Account.t()` `:number`. This operation will add a new `Bank.Financial.Transaction`
+  to the `Bank.Customers.Account.t()` and then recalculate the `Bank.Customers.Account.t()` `:balance`
+  adding the `amount` to it. Deposit operations are performed with a lock in the `Bank.Customers.Account.t()`
+  record to prevent issues while calculating the final `Bank.Customers.Account.t()` `:balance`.
+  """
   @spec deposit(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def deposit(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     amount = Money.new(amount)
@@ -36,6 +55,13 @@ defmodule Bank.Financial do
     |> Repo.transaction()
   end
 
+  @doc """
+  Performs a `Bank.Financial.Operation.Withdraw.build/1` operation on the provided
+  `Bank.Customers.Account.t()` `:number`. This operation will add a new `Bank.Financial.Transaction`
+  to the `Bank.Customers.Account.t()` and then recalculate the `Bank.Customers.Account.t()` `:balance`
+  subtracting the `amount` to it. Withdraw operations are performed with a lock in the `Bank.Customers.Account.t()`
+  record to prevent issues while calculating the final `Bank.Customers.Account.t()` `:balance`.
+  """
   @spec withdraw(String.t(), integer()) :: {:ok, any()} | {:error, any()}
   def withdraw(account_number, amount) when is_binary(account_number) and is_integer(amount) do
     amount = Money.new(amount)
@@ -69,6 +95,14 @@ defmodule Bank.Financial do
     |> LockAccountByNumber.build()
   end
 
+  @doc """
+  Returns a filtered page with all the `Bank.Financial.Transaction` created by following parameters:
+
+  - :page - the number of the page.
+  - :page_size - The size of the transactions list.
+  - :inserted_from - The date to filter all transactions that were created on and after this date.
+  - :inserted_until - The date to filter all transactions that were created on and before this date.
+  """
   @spec filter_transactions(map()) :: {:ok, map()} | {:error, binary()}
   def filter_transactions(params \\ %{}) when is_map(params) do
     with params when is_map(params) <- parse_inserted_filters(params),

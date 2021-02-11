@@ -1,5 +1,7 @@
 defmodule Bank.Customers.Account do
-  @moduledoc false
+  @moduledoc """
+  A scheme responsible for modeling a `Bank.Customers.User.t()` bank account data.
+  """
 
   use Ecto.Schema
 

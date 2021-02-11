@@ -7,16 +7,8 @@ defmodule Bank.Financial.Transaction.QueryBuilder do
 
   @spec filter(map()) :: Ecto.Query.t()
   def filter(params) when is_map(params) do
-    Transaction
-    |> order_by(^filter_order_by(params["order_by"]))
-    |> where(^filter_where(params))
+    where(Transaction, ^filter_where(params))
   end
-
-  defp filter_order_by("inserted_at"), do: dynamic([t], t.inserted_at)
-
-  defp filter_order_by("inserted_at_desc"), do: [desc: dynamic([t], t.inserted_at)]
-
-  defp filter_order_by(_), do: []
 
   defp filter_where(params) do
     Enum.reduce(params, dynamic(true), fn

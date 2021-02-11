@@ -8,10 +8,11 @@
   "skip_files": [
     "test",
     "priv",
-    "lib/bank_web.ex",
+    "lib/bank/financial/operation.ex",
     "lib/bank/notifications/email.ex",
     "lib/bank/notifications/mailer.ex",
     "lib/bank/application.ex",
+    "lib/bank_web.ex",
     "lib/bank_web/gettext.ex",
     "lib/bank_web/views/error_helpers.ex"
   ],

@@ -98,7 +98,7 @@ The main workflow, will schedule 3 jobs, `test`, `lint` and `deploy`.
 
 🔐 **Authentication**
 
-Requests to authenticated endpoints are authorized through a Bearer token that should be provided in the `Authorization` HTTP header. Check the `/api/v1/tokens` endpoint for further details on how to generate Bearer tokens.
+Requests to authenticated endpoints are authorized through a Bearer token that should be provided in the `Authorization` HTTP header. Check the `/api/v1/tokens` endpoint to see how to generate Bearer tokens.
 
 
 ## POST /api/v1/tokens
